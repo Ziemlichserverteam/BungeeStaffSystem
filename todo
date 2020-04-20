@@ -1,0 +1,35 @@
+- report system
+   - report
+   - reportsall
+- ban system
+   - check
+   - ban
+   - kick
+   - unban
+   - uban
+- mysql
+- logsystem
+- chat
+   - teamchat
+- permission / nametags prefix
+- tablist
+- motd
+- UUIDfetcher
+- player manager
+   - userid
+   - uuid
+   - name
+
+- helpful commands
+   - $$$find
+   - $$$jump
+   - $$$broadcast
+   - $$$vote
+   - $$$hub/leave/l
+   - $$server
+   - $$$help
+   - $$$move
+   - $servers | servers werden nicht richtig angezeigt
+- friends system
+
+

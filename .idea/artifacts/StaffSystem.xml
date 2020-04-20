@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="StaffSystem">
+    <output-path>D:/BungeeServer/servers/proxy/plugins</output-path>
+    <root id="archive" name="StaffSystem.jar">
+      <element id="module-output" name="BungeeStaffSystem" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/plugin.yml" />
+    </root>
+  </artifact>
+</component>
