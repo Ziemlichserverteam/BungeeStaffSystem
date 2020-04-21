@@ -1,6 +1,8 @@
 package de.ziemlich.bungeeStaffSystem.report.commands;
 
 import de.ziemlich.bungeeStaffSystem.report.ReportManager;
+import de.ziemlich.bungeeStaffSystem.report.reportUtils.Report;
+import de.ziemlich.bungeeStaffSystem.utils.StaffSystemManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -16,49 +18,80 @@ public class ReportCMD extends Command {
         super(name);
     }
 
+    String prefix = ReportManager.rm.reportPrefix;
+
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(sender instanceof ProxiedPlayer) {
-            ProxiedPlayer p = (ProxiedPlayer) sender;
-            if(args.length == 2) {
-                ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[0]);
-                if(target != null && target.getServer().getInfo() != null){
-                    if(ReportManager.rm.reportReasons.contains(args[1].toUpperCase())) {
-                        if(!(args[0].equals(p.getName()))) {
-                            if(!ReportManager.rm.hasPlayerReportedTarget(p, target)) {
-                                ReportManager.rm.createReport(target, p, args[1].toUpperCase());
-                                p.sendMessage(new TextComponent(ReportManager.rm.reportPrefix + "§7Du hast §c" + target.getName() + " §7erfolgreich wegen §e"
-                                        + args[1].toUpperCase() + " §7gemeldet! Wir werden uns so bald wie möglich um deinen Report kümmern!"));
-
-                                for(ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
-                                    if(all.hasPermission("staffsystem.report.receive")) {
-                                        TextComponent text = new TextComponent(ReportManager.rm.reportPrefix + "§c" + target.getName() + " §7wurde von §c" + p.getName()
-                                                + " §7wegen §e" + args[1].toUpperCase()+ " §7reportet! §8[§e#" + ReportManager.rm.getLastReportID() + "§8]");
-                                        text.setClickEvent( new ClickEvent( ClickEvent.Action.RUN_COMMAND, "/reportsall " + target.getName() ) );
-                                        text.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder( "§7Diesen Report bearbeiten." ).create()));
-                                        all.sendMessage(text);
-                                    }
-                                }
-                            } else {
-                                p.sendMessage(new TextComponent(ReportManager.rm.reportPrefix + "§7Du hast §c" + target.getName() + " §7bereits reportet!"));
-                            }
-                        }else {
-                            p.sendMessage(new TextComponent(ReportManager.rm.reportPrefix + "§cDu kannst dich nicht selber reporten!"));
-                        }
-                    }else {
-                        p.sendMessage(new TextComponent(ReportManager.rm.reportPrefix + "§cMöglich Reportgründe:"));
-                        for(int i = 0; i < ReportManager.rm.reportReasons.size(); i++){
-                            p.sendMessage(new TextComponent("§7- §e" + ReportManager.rm.reportReasons.get(i)));
-                        }
-                    }
-                }else {
-                    p.sendMessage(new TextComponent(ReportManager.rm.reportPrefix + "§c" + args[0] + " §7konnte nicht gefunden werden!"));
-                }
-            }else {
-                p.sendMessage(new TextComponent(ReportManager.rm.reportPrefix + "§cNutze /report <Spieler> <Grund>"));
-            }
-        }else {
+        if(!(sender instanceof ProxiedPlayer)) {
             sender.sendMessage(new TextComponent(ReportManager.rm.reportPrefix + "§cDieser Befehl kann nur von Spieler ausgeführt werden!"));
+            return;
         }
+
+        ProxiedPlayer reportedBy = (ProxiedPlayer) sender;
+
+        if(args.length != 2) {
+            reportedBy.sendMessage(new TextComponent(prefix + "§cNutze /report <Spieler> <Grund>"));
+            return;
+        }
+
+        if(ProxyServer.getInstance().getPlayer(args[0]) == null) {
+            reportedBy.sendMessage(new TextComponent(prefix + "§c" + args[0] + " §7wurde nicht gefunden!"));
+            return;
+        }
+
+        ProxiedPlayer reported = ProxyServer.getInstance().getPlayer(args[0]);
+
+        if(!(reported.isConnected())){
+            reportedBy.sendMessage(new TextComponent(prefix + "§c" + args[0] + " §7ist nicht online!"));
+            return;
+        }
+
+        if(reported.hasPermission("staffsystem.report.block")) {
+            reportedBy.sendMessage(new TextComponent(prefix + "§7Diesen Speieler kannst du nicht reporten!"));
+            return;
+        }
+
+        if(ReportManager.rm.hasPlayerReportedTarget(reportedBy, reported)) {
+            reportedBy.sendMessage(new TextComponent(prefix + "§7Du hast §c" + reported.getName() + " §7bereits reportet!"));
+            return;
+        }
+
+        if(!(ReportManager.rm.reportReasons.contains(args[1]))) {
+            reportedBy.sendMessage(new TextComponent(prefix + "§7Mögliche Reportgründe:"));
+            for(int i = 0; i < ReportManager.rm.reportReasons.size(); i++) {
+                reportedBy.sendMessage(new TextComponent("§7- §e" + ReportManager.rm.reportReasons.get(i)));
+            }
+            return;
+        }
+
+        Report report = new Report(reported, reportedBy, args[1].toUpperCase());
+        report.create();
+
+        reportedBy.sendMessage(new TextComponent(prefix + "§aVielen Dank für deine Hilfe! §7Wir werden uns so schnell wi emöglich darum kümmern!"));
+
+        for(ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
+
+            if(all.hasPermission("staffsystem.report.receive")) {
+
+                all.sendMessage(new TextComponent("§8================================="));
+                all.sendMessage(new TextComponent("§7"));
+                all.sendMessage(new TextComponent("§8- §cNeuer Report:"));
+                all.sendMessage(new TextComponent("§8- §7Reporteter Spieler: §c" + reported.getName()));
+                all.sendMessage(new TextComponent("§8- §7Reportet von: §c" + reportedBy.getName()));
+                all.sendMessage(new TextComponent("§8- §7Grund: §e" + report.getReason()));
+                all.sendMessage(new TextComponent("§8- §7Server: §c" + reported.getServer().getInfo().getName()));
+                all.sendMessage(new TextComponent("§7"));
+
+                TextComponent text = new TextComponent("§7Klicke §chier §7um diesen Report zu bearbeiten!");
+                text.setClickEvent( new ClickEvent( ClickEvent.Action.RUN_COMMAND, "/reports accept " + reported.getName()));
+                text.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder( "§7Report bearbeiten").create()));
+                all.sendMessage(text);
+
+                all.sendMessage(new TextComponent("§7"));
+                all.sendMessage(new TextComponent("§8================================="));
+            }
+
+        }
+
     }
 }
