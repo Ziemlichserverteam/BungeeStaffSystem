@@ -16,22 +16,7 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onJoin(LoginEvent e) {
 
-        if(!(e.getConnection() instanceof ProxiedPlayer)) {
-            return;
-        }
-
-        ProxiedPlayer target = (ProxiedPlayer) e.getConnection();
-
-        if(!ReportManager.rm.isReported(target)) {
-            System.out.println("not reported");
-            return;
-        }
-
-        if(ReportManager.rm.isReportProcessed(target)) {
-            System.out.println("processed");
-            return;
-        }
-
+        /*
         //ReportManager.rm.changeOnlineState(target);
         for(ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
             if(all.hasPermission("staffsystem.report.receive")) {
@@ -41,7 +26,7 @@ public class JoinListener implements Listener {
                 text.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder( "§7Diesen Report bearbeiten." ).create()));
                 all.sendMessage(text);
             }
-        }
+        }*/
 
     }
 }
