@@ -1,4 +1,4 @@
-package de.ziemlich.bungeeStaffSystem.loginsystem.db;
+package de.ziemlich.bungeeStaffSystem.accountsystem.db;
 
 public class AccountDAO {
 }
