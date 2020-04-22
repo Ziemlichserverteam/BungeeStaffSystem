@@ -4,6 +4,9 @@ import de.ziemlich.bungeeStaffSystem.StaffSystem;
 import de.ziemlich.bungeeStaffSystem.helpful.*;
 import de.ziemlich.bungeeStaffSystem.mySql.SQL;
 import de.ziemlich.bungeeStaffSystem.mySql.SQLConfig;
+import de.ziemlich.bungeeStaffSystem.punishsystem.db.BanDAO;
+import de.ziemlich.bungeeStaffSystem.punishsystem.db.MuteDAO;
+import de.ziemlich.bungeeStaffSystem.punishsystem.idrsystem.db.RIDDAO;
 import de.ziemlich.bungeeStaffSystem.report.ReportManager;
 import net.md_5.bungee.api.ProxyServer;
 
@@ -16,6 +19,9 @@ public class StaffSystemManager {
         register();
         connectDB();
         ReportManager.rm.loadReportSystem();
+        RIDDAO.getInstance().loadTable();
+        BanDAO.getInstance().loadTable();
+        MuteDAO.getInstance().loadTable();
     }
 
     private SQL MainSQL;
