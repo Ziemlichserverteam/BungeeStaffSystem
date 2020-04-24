@@ -1,6 +1,8 @@
 package de.ziemlich.bungeeStaffSystem.punishsystem.commands;
 
 import de.ziemlich.bungeeStaffSystem.punishsystem.commands.subcommand.IdCreateSubCommand;
+import de.ziemlich.bungeeStaffSystem.punishsystem.commands.subcommand.IdDeleteSubCommand;
+import de.ziemlich.bungeeStaffSystem.punishsystem.commands.subcommand.IdEditSubCommand;
 import de.ziemlich.bungeeStaffSystem.report.ReportManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -34,11 +36,11 @@ public class IDCommandExecutor extends Command {
             return;
         }
         if(args[0].equalsIgnoreCase("edit")) {
-            new IdCreateSubCommand(sender,args);
+            new IdEditSubCommand(sender,args);
             return;
         }
         if(args[0].equalsIgnoreCase("delete")) {
-            new IdCreateSubCommand(sender,args);
+            new IdDeleteSubCommand(sender,args);
             return;
         }
 

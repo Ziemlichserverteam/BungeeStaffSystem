@@ -1,7 +1,5 @@
 package de.ziemlich.bungeeStaffSystem.punishsystem.db;
 
-import de.ziemlich.bungeeStaffSystem.StaffSystem;
-import de.ziemlich.bungeeStaffSystem.punishsystem.util.Ban;
 import de.ziemlich.bungeeStaffSystem.punishsystem.util.Mute;
 import de.ziemlich.bungeeStaffSystem.punishsystem.util.Type;
 import de.ziemlich.bungeeStaffSystem.utils.StaffSystemManager;

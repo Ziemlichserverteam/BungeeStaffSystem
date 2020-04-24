@@ -7,15 +7,15 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 import java.sql.SQLException;
 
-public class IdEditSubCommand {
+public class IdDeleteSubCommand {
 
-    public IdEditSubCommand(CommandSender sender, String[] args) {
+    public IdDeleteSubCommand(CommandSender sender, String[] args) {
         execute(sender,args);
     }
 
-    public void execute(CommandSender sender, String[] args) {
-        if(args.length < 3) {
-            sender.sendMessage(new TextComponent("§cNutze /id <edit> <id> <reason...>"));
+    private void execute(CommandSender sender, String[] args) {
+        if(args.length != 2) {
+            sender.sendMessage(new TextComponent("§cNutze /id <delete> <id>"));
             return;
         }
 
@@ -38,23 +38,9 @@ public class IdEditSubCommand {
             return;
         }
 
-        String reason = "";
+        RIDDAO.getInstance().removeID(id);
 
-        for(int i = 2; i < args.length; i++) {
-            reason = reason + args[i] + " ";
-        }
-
-        try {
-            RIDDAO.getInstance().updateRID(new RID(id, reason, RIDDAO.getInstance().getId(id).getType()));
-        } catch (SQLException e) {
-            sender.sendMessage(new TextComponent("§cInternal error. Please contact an admin."));
-            e.printStackTrace();
-            return;
-        }
-
-        sender.sendMessage(new TextComponent("§aDie ID wurde erfolgreich editiert."));
-
-
+        sender.sendMessage(new TextComponent("§aDie ID wurde erfolgreich gelöscht."));
     }
 
 }
