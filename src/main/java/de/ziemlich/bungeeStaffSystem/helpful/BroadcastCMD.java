@@ -23,7 +23,7 @@ public class BroadcastCMD extends Command {
                 }
                 for(ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
                     all.sendMessage(new TextComponent("§7 "));
-                    all.sendMessage(new TextComponent("§8[§bBroadCast§8]" + message.replaceAll("&", "§")));
+                    all.sendMessage(new TextComponent("§8[§bBroadCast§8] §f" + message.replaceAll("&", "§")));
                     all.sendMessage(new TextComponent("§7 "));
                 }
             }else {

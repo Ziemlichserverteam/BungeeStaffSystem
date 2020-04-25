@@ -11,6 +11,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import java.rmi.server.UID;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -49,25 +50,24 @@ public class ReportManager {
         }
     }
 
-    public boolean isReported(ProxiedPlayer target) {
+    public boolean isReported(UUID targetUUID) {
         boolean b = false;
-        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT reportedPlayerUUID FROM reports WHERE reportedPlayerUUID = ?" + UUIDFetcher.getUUID(target.getName()), null);
-        try {
-            while (rs.next()){
-                b = true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if(StaffSystemManager.ssm.getMainSQL().countResult("reports", "reportedPlayerUUID", targetUUID) >= 1) {
+            b = true;
         }
         return b;
     }
 
-    public boolean isReportProcessed(ProxiedPlayer target) {
+    public boolean isReportProcessed(UUID targetUUID) {
         boolean b = false;
-        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT processed FROM reports WHERE targetUUID = " + UUIDFetcher.getUUID(target.getName()), null);
+        System.out.println("point 1");
+        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM reports WHERE reportedPlayerUUID = ?",
+                Arrays.asList(targetUUID));
+        System.out.println("point 2");
         try {
             while (rs.next()){
-                if(rs.getBoolean("processed")) {
+                if(rs.getBoolean("inProgress")) {
+                    System.out.println("point 3");
                     b = true;
                 }
             }
@@ -77,9 +77,26 @@ public class ReportManager {
         return b;
     }
 
-    public int getReportID(ProxiedPlayer target) {
+    public boolean isReportFinished(UUID targetUUID) {
+        boolean b = false;
+        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT finished FROM reports WHERE reportedPlayerUUID = ?",
+                Arrays.asList(targetUUID));
+        try {
+            while (rs.next()){
+                if(rs.getBoolean("finished")) {
+                    b = true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return b;
+    }
+
+    public int getReportID(UUID targetUUID) {
         int id = 0;
-        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT id FROM reports WHERE reportedPlayerUUID = " + UUIDFetcher.getUUID(target.getName()), null);
+        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT id FROM reports WHERE reportedPlayerUUID = ?",
+                Arrays.asList(targetUUID));
         try {
             while (rs.next()){
                 id = rs.getInt("id");
@@ -90,9 +107,39 @@ public class ReportManager {
         return id;
     }
 
-    public String getReportReason(ProxiedPlayer target) {
+    public int getReportModUUID(UUID targetUUID) {
+        int id = 0;
+        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT moderatorUUID FROM reports WHERE reportedPlayerUUID = ?",
+                Arrays.asList(targetUUID));
+        try {
+            while (rs.next()){
+                id = rs.getInt("moderatorUUID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+
+    public void setMod(UUID reportedUUID, UUID moderatorUUID) {
+        StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE reports SET moderatorUUID = ? WHERE reportedPlayerUUID = ?",
+                Arrays.asList(moderatorUUID, reportedUUID));
+    }
+
+    public void setInProgress(UUID reportedUUID, boolean isInProgress) {
+        StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE reports SET inProgress = ? WHERE reportedPlayerUUID = ?",
+                Arrays.asList(1, reportedUUID));
+    }
+
+    public void setFinished(UUID reportedUUID, boolean isFinished) {
+        StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE reports SET finished = ? WHERE reportedPlayerUUID = ?",
+                Arrays.asList(isFinished, reportedUUID));
+    }
+
+    public String getReportReason(UUID targetUUID) {
         String reason = "";
-        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT reason FROM reports WHERE reportedPlayerUUID = " + UUIDFetcher.getUUID(target.getName()), null);
+        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT reason FROM reports WHERE reportedPlayerUUID = ?",
+                Arrays.asList(targetUUID));
         try {
             while (rs.next()){
                 reason = rs.getString("reason");
@@ -103,9 +150,10 @@ public class ReportManager {
         return reason;
     }
 
-    public String getReportedBy(ProxiedPlayer target) {
+    public String getReportedBy(UUID targetUUID) {
         String reportedBy = "";
-        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT reportedByUUID FROM reports WHERE reportedPlayerUUID = " + UUIDFetcher.getUUID(target.getName()), null);
+        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT reportedByUUID FROM reports WHERE reportedPlayerUUID = ?",
+                Arrays.asList(targetUUID));
         try {
             while (rs.next()){
                 reportedBy = rs.getString("reportedByUUID");
@@ -114,6 +162,30 @@ public class ReportManager {
             e.printStackTrace();
         }
         return reportedBy;
+    }
+
+    public boolean isModerator(UUID modUUID) {
+        boolean b = false;
+        if(StaffSystemManager.ssm.getMainSQL().countResult("reports", "moderatorUUID", modUUID) == 1) {
+
+            ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM reports WHERE moderatorUUID = ?",
+                    Arrays.asList(modUUID));
+            try {
+                while (rs.next()){
+                    if(rs.getBoolean("inProgress")) {
+                        System.out.println("Sys point 1");
+                        if(rs.getBoolean("finished")) {
+                            System.out.println("Sys point 2");
+                            b = true;
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return b;
     }
 
     public boolean hasPlayerReportedTarget(ProxiedPlayer reportedBy, ProxiedPlayer reported) {

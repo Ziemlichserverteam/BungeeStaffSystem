@@ -22,15 +22,6 @@ public class QuitListener implements Listener {
     @EventHandler
     public void onQuit(PlayerDisconnectEvent e) {
 
-        ProxiedPlayer target = e.getPlayer();
-
-        if(!ReportManager.rm.isReported(target)) {
-            return;
-        }
-
-        if(ReportManager.rm.isReportProcessed(target)) {
-            return;
-        }
 
         //ReportManager.rm.changeOnlineState(target);
 
