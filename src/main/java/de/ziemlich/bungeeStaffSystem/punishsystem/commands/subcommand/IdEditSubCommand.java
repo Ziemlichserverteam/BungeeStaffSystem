@@ -45,7 +45,7 @@ public class IdEditSubCommand {
         }
 
         try {
-            RIDDAO.getInstance().updateRID(new RID(id, reason, RIDDAO.getInstance().getId(id).getType()));
+            RIDDAO.getInstance().updateRID(new RID(id, RIDDAO.getInstance().getId(id).getLength(), reason, RIDDAO.getInstance().getId(id).getType()));
         } catch (SQLException e) {
             sender.sendMessage(new TextComponent("§cInternal error. Please contact an admin."));
             e.printStackTrace();

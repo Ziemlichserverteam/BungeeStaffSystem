@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class Ban {
 
-    int banid;
+    String banid;
     UUID uuid;
     String reason;
     long endTime;
@@ -15,7 +15,7 @@ public class Ban {
     String unbannendDate;
     boolean active;
 
-    public Ban(int banid, UUID uuid, String reason, long endTime, String punisher, long timestamp, Type type, boolean permanent, String unbannendDate, boolean active) {
+    public Ban(String banid, UUID uuid, String reason, long endTime, String punisher, long timestamp, Type type, boolean permanent, String unbannendDate, boolean active) {
         this.banid = banid;
         this.uuid = uuid;
         this.reason = reason;
@@ -28,11 +28,11 @@ public class Ban {
         this.active = active;
     }
 
-    public int getBanid() {
+    public String getBanid() {
         return banid;
     }
 
-    public void setBanid(int banid) {
+    public void setBanid(String banid) {
         this.banid = banid;
     }
 

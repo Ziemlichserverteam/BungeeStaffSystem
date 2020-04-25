@@ -8,9 +8,9 @@ public class RID {
     private int id;
     private String reason;
     private Type type;
-    private long length;
+    private String length;
 
-    public RID(int id, long length, String reason, Type type) {
+    public RID(int id, String length, String reason, Type type) {
         this.id = id;
         this.reason = reason;
         this.type = type;
@@ -41,11 +41,11 @@ public class RID {
         this.type = type;
     }
 
-    public long getLength() {
+    public String getLength() {
         return length;
     }
 
-    public void setLength(long length) {
+    public void setLength(String length) {
         this.length = length;
     }
 }

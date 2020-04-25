@@ -67,7 +67,7 @@ public class ReportCMD extends Command {
         Report report = new Report(reported, reportedBy, args[1].toUpperCase());
         report.create();
 
-        reportedBy.sendMessage(new TextComponent(prefix + "§aVielen Dank für deine Hilfe! §7Wir werden uns so schnell wi emöglich darum kümmern!"));
+        reportedBy.sendMessage(new TextComponent(prefix + "§aVielen Dank für deine Hilfe! §7Wir werden uns so schnell wie möglich darum kümmern!"));
 
         for(ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
 
@@ -90,8 +90,6 @@ public class ReportCMD extends Command {
                 all.sendMessage(new TextComponent("§7"));
                 all.sendMessage(new TextComponent("§8================================="));
             }
-
         }
-
     }
 }

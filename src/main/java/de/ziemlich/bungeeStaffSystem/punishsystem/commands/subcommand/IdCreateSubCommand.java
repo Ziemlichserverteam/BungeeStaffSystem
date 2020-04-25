@@ -1,5 +1,6 @@
 package de.ziemlich.bungeeStaffSystem.punishsystem.commands.subcommand;
 
+import de.ziemlich.bungeeStaffSystem.punishsystem.PunishManager;
 import de.ziemlich.bungeeStaffSystem.punishsystem.idrsystem.db.RIDDAO;
 import de.ziemlich.bungeeStaffSystem.punishsystem.idrsystem.util.RID;
 import de.ziemlich.bungeeStaffSystem.punishsystem.util.Type;
@@ -19,7 +20,7 @@ public class IdCreateSubCommand {
 
 
         if(args.length < 4) {
-            sender.sendMessage(new TextComponent("§cNutze /id <create> <id> <tpye> <reason...>"));
+            sender.sendMessage(new TextComponent("§cNutze /id <create> <id> <tpye> <length> <reason...>"));
             return;
         }
 
@@ -52,13 +53,20 @@ public class IdCreateSubCommand {
             return;
         }
 
+        String time = args[3];
+
+        if(!PunishManager.validTime(time)) {
+            sender.sendMessage(new TextComponent("§cBitte nutzte als zeit s/min/h/d/mo/permanent"));
+            return;
+        }
+
         String reason = "";
 
-        for(int i = 3; i < args.length; i++) {
+        for(int i = 4; i < args.length; i++) {
             reason = reason + args[i] + " ";
         }
 
-        RIDDAO.getInstance().addID(new RID(id,reason,type));
+        RIDDAO.getInstance().addID(new RID(id,time,reason,type));
         sender.sendMessage(new TextComponent("§aDu hast die ID erfolgreich erstellt."));
 
 
