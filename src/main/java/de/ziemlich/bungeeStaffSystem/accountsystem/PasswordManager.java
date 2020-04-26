@@ -34,7 +34,7 @@ public class PasswordManager {
     }
 
 
-    private static byte[] createSalt() {
+    public static byte[] createSalt() {
         byte[] bytes = new byte[20];
         SecureRandom random = new SecureRandom();
         random.nextBytes(bytes);

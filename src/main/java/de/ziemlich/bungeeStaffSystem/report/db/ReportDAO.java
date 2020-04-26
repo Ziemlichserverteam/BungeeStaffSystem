@@ -134,6 +134,7 @@ public class ReportDAO {
                     b = true;
                 }
             }
+            rs.close();
             return b;
         } catch (SQLException e) {
             e.printStackTrace();

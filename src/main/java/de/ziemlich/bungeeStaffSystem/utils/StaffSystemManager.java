@@ -9,11 +9,16 @@ import de.ziemlich.bungeeStaffSystem.punishsystem.db.MuteDAO;
 import de.ziemlich.bungeeStaffSystem.punishsystem.idrsystem.db.RIDDAO;
 import de.ziemlich.bungeeStaffSystem.report.ReportManager;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class StaffSystemManager {
 
     public static StaffSystemManager ssm = new StaffSystemManager();
     public String prefix = "§8[§cStaff§aSystem§8]" + " ";
+    public static List<ProxiedPlayer> loggedIn = new ArrayList<>();
 
     public void loadStaffSystem() {
         register();

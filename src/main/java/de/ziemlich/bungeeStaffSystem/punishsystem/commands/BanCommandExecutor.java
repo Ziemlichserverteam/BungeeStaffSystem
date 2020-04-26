@@ -1,6 +1,7 @@
 package de.ziemlich.bungeeStaffSystem.punishsystem.commands;
 
 import de.ziemlich.bungeeStaffSystem.StaffSystem;
+import de.ziemlich.bungeeStaffSystem.accountsystem.db.AccountDAO;
 import de.ziemlich.bungeeStaffSystem.ids.ID;
 import de.ziemlich.bungeeStaffSystem.ids.IDTypes;
 import de.ziemlich.bungeeStaffSystem.punishsystem.PunishManager;
@@ -15,8 +16,6 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.TabExecutor;
-
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,6 +36,14 @@ public class BanCommandExecutor extends Command {
             sender.sendMessage(new TextComponent(prefix + "§cKeine Rechte!"));
             return;
         }
+
+        if(sender instanceof ProxiedPlayer) {
+            if(!AccountDAO.getInstance().isLoggedIn(((ProxiedPlayer) sender).getUniqueId())) {
+                sender.sendMessage(new TextComponent(prefix + "§cBitte logge dich zuerst ein."));
+                return;
+            }
+        }
+
 
         if(args.length != 2) {
             sender.sendMessage(new TextComponent(prefix + "§cNutze: /ban <player> <id>"));
@@ -114,6 +121,7 @@ public class BanCommandExecutor extends Command {
                 globalPlayer.sendMessage(new TextComponent("§8- §7Grund: §e" + ban.getReason()));
                 globalPlayer.sendMessage(new TextComponent("§8- §7Zeit: §e" + rid.getLength()));
                 globalPlayer.sendMessage(new TextComponent("§7"));
+                globalPlayer.sendMessage(new TextComponent("§8================================="));
             }
         }
 
