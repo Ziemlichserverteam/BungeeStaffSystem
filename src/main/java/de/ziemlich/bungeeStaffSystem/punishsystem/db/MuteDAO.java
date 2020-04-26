@@ -24,7 +24,7 @@ public class MuteDAO {
         StaffSystemManager.ssm.getMainSQL().executeUpdate("INSERT INTO mutes(BanID, UUID, Reason, endTime, Punisher, timeStamp, Type, Permanent, Unbanned, Active) VALUES(?, ?, ?, ?, ?,?, ?, ?,?, ?)", new ArrayList<>(Arrays.asList(mute.getBanid(), mute.getUuid().toString(), mute.getReason(), mute.getEndTime(), mute.getPunisher(), mute.getTimestamp(), mute.getType().toString(),mute.isPermanent(), mute.getUnbannendDate(), mute.isActive())));
     }
 
-    public Mute getMute(int muteID) throws SQLException {
+    public Mute getMute(String muteID) throws SQLException {
         ResultSet rs =  StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM mutes WHERE BanID = ?", Arrays.asList(muteID));
         Mute mute;
         if(rs.next()) {
@@ -53,7 +53,7 @@ public class MuteDAO {
 
     }
 
-    public boolean doesMuteExist(int muteID) throws SQLException{
+    public boolean doesMuteExist(String muteID) throws SQLException{
         return (getMute(muteID) != null);
     }
 
@@ -62,7 +62,7 @@ public class MuteDAO {
         ResultSet rs =  StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM mutes WHERE BanID = ?", Arrays.asList(uuid.toString()));
         ArrayList<Mute> mutes = new ArrayList();
         while(rs.next()) {
-            int banID = rs.getInt("BanID");
+            String banID = rs.getString("BanID");
             String reason = rs.getString("Reason");
             long endTime = rs.getLong("endTime");
             String Punisher = rs.getString("Punisher");
@@ -99,16 +99,16 @@ public class MuteDAO {
         StaffSystemManager.ssm.getMainSQL().executeUpdate("DELETE FROM mutes WHERE UUID = ?",Arrays.asList(uuid.toString()));
     }
 
-    public void setMuteActivity(boolean activ, int muteID) {
+    public void setMuteActivity(boolean activ, String muteID) {
         StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE mutes SET Active = ? WHERE BanID = ?",Arrays.asList(activ,muteID));
     }
 
-    public void setMutePermanent(boolean permanent, int muteID) {
+    public void setMutePermanent(boolean permanent, String muteID) {
         StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE mutes SET Permanent = ? WHERE BanID = ?",Arrays.asList(permanent,muteID));
     }
 
 
-    public void setMuteEndTime(long endTime, int muteID) {
+    public void setMuteEndTime(long endTime, String muteID) {
         StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE mutes SET endTime = ? WHERE BanID = ?",Arrays.asList(endTime,muteID));
         StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE mutes SET Unbanned = ? WHERE BanID = ?",Arrays.asList(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(endTime)),muteID));
     }

@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class Mute {
 
-    int banid;
+    String banid;
     UUID uuid;
     String reason;
     long endTime;
@@ -16,7 +16,7 @@ public class Mute {
     boolean active;
 
 
-    public Mute(int banid, UUID uuid, String reason, long endTime, String punisher, long timestamp, Type type, boolean permanent, String unbannendDate, boolean active) {
+    public Mute(String banid, UUID uuid, String reason, long endTime, String punisher, long timestamp, Type type, boolean permanent, String unbannendDate, boolean active) {
         this.banid = banid;
         this.uuid = uuid;
         this.reason = reason;
@@ -29,11 +29,11 @@ public class Mute {
         this.active = active;
     }
 
-    public int getBanid() {
+    public String getBanid() {
         return banid;
     }
 
-    public void setBanid(int banid) {
+    public void setBanid(String banid) {
         this.banid = banid;
     }
 

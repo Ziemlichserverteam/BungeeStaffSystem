@@ -35,7 +35,7 @@ public class ReportDAO {
                 Arrays.asList(report.getReportedPlayerUUID(), report.getReportedByUUID(), report.getModeratorUUID(), report.getReason().toString(), report.getState().toString(), report.getReportId()));
     }
 
-    public Report getReport(int reportID) throws SQLException {
+    public Report getReport(String reportID) throws SQLException {
         ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM reports WHERE ReportId = ?", Arrays.asList(reportID));
         Report report;
         if (rs.next()) {
@@ -62,7 +62,7 @@ public class ReportDAO {
 
     }
 
-    public boolean doesReportExist(int reportId) throws SQLException {
+    public boolean doesReportExist(String reportId) throws SQLException {
         return (getReport(reportId) != null);
     }
 
@@ -87,7 +87,7 @@ public class ReportDAO {
             String stateAsString = rs.getString("ReportState");
             ReportState state = ReportState.valueOf(stateAsString);
 
-            int reportID = rs.getInt("ReportId");
+            String reportID = rs.getString("ReportId");
 
             reports.add(new Report(reportedPlayerUUID, reportedByUUID, moderatorUUID, reason, state, reportID));
         }
@@ -116,7 +116,7 @@ public class ReportDAO {
             String stateAsString = rs.getString("ReportState");
             ReportState state = ReportState.valueOf(stateAsString);
 
-            int reportID = rs.getInt("ReportId");
+            String reportID = rs.getString("ReportId");
 
             reports.add(new Report(reportedPlayerUUID, reportedByUUID, moderatorUUID, reason, state, reportID));
         }

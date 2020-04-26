@@ -4,6 +4,8 @@ import de.ziemlich.bungeeStaffSystem.StaffSystem;
 import de.ziemlich.bungeeStaffSystem.accountsystem.util.Account;
 import de.ziemlich.bungeeStaffSystem.mySql.SQL;
 import de.ziemlich.bungeeStaffSystem.utils.StaffSystemManager;
+
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -86,6 +88,11 @@ public class AccountDAO {
 
     public boolean hasAccount(UUID uuid) throws SQLException {
         return (getAccount(uuid) != null);
+    }
+
+    public void loadTableStaff() {
+        sql.executeUpdate("CREATE TABLE IF NOT EXISTS accounts(UUID VARCHAR(36) PRIMARY KEY, Password VARCHAR(100), Salt VARCHAR(20), Rank VARCHAR(16), Grouppower INT(5))",null);
+
     }
 
 

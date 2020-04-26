@@ -18,6 +18,7 @@ public class PasswordCommandExecutor extends Command {
     public PasswordCommandExecutor(String name) {
         super(name);
     }
+
     String prefix = ReportManager.rm.reportPrefix;
 
     @Override

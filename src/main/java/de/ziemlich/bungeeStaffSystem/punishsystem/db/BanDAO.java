@@ -1,6 +1,5 @@
 package de.ziemlich.bungeeStaffSystem.punishsystem.db;
 
-import de.ziemlich.bungeeStaffSystem.StaffSystem;
 import de.ziemlich.bungeeStaffSystem.punishsystem.util.Ban;
 import de.ziemlich.bungeeStaffSystem.punishsystem.util.Type;
 import de.ziemlich.bungeeStaffSystem.utils.StaffSystemManager;
@@ -25,7 +24,7 @@ public class BanDAO {
         StaffSystemManager.ssm.getMainSQL().executeUpdate("INSERT INTO bans(BanID, UUID, Reason, endTime, Punisher, timeStamp, Type, Permanent, Unbanned, Active) VALUES(?, ?, ?, ?, ?,?, ?, ?,?, ?)", new ArrayList<>(Arrays.asList(                ban.getBanid(), ban.getUuid().toString(), ban.getReason(), ban.getEndTime(), ban.getPunisher(), ban.getTimestamp(), ban.getType().toString(),ban.isPermanent(), ban.getUnbannendDate(), ban.isActive())));
     }
 
-    public Ban getBan(int banID) throws SQLException {
+    public Ban getBan(String banID) throws SQLException {
         ResultSet rs =  StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM bans WHERE BanID = ?", Arrays.asList(banID));
         Ban ban;
         if(rs.next()) {
@@ -54,7 +53,7 @@ public class BanDAO {
 
     }
 
-    public boolean doesBanExist(int banID) throws SQLException{
+    public boolean doesBanExist(String banID) throws SQLException{
         return (getBan(banID) != null);
     }
 
@@ -63,7 +62,7 @@ public class BanDAO {
         ResultSet rs =  StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM bans WHERE BanID = ?", Arrays.asList(uuid.toString()));
         ArrayList<Ban> bans = new ArrayList();
         while(rs.next()) {
-            int banID = rs.getInt("BanID");
+            String banID = rs.getString("BanID");
             String reason = rs.getString("Reason");
             long endTime = rs.getLong("endTime");
             String Punisher = rs.getString("Punisher");
@@ -100,16 +99,16 @@ public class BanDAO {
         StaffSystemManager.ssm.getMainSQL().executeUpdate("DELETE FROM bans WHERE UUID = ?",Arrays.asList(uuid.toString()));
     }
 
-    public void setBanActivity(boolean activ, int banID) {
+    public void setBanActivity(boolean activ, String banID) {
         StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE bans SET Active = ? WHERE BanID = ?",Arrays.asList(activ,banID));
     }
 
-    public void setBanPermanent(boolean permanent, int banID) {
+    public void setBanPermanent(boolean permanent, String banID) {
         StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE bans SET Permanent = ? WHERE BanID = ?",Arrays.asList(permanent,banID));
     }
 
 
-    public void setBanEndTime(long endTime, int banid) {
+    public void setBanEndTime(long endTime, String banid) {
         StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE bans SET endTime = ? WHERE BanID = ?",Arrays.asList(endTime,banid));
         StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE bans SET Unbanned = ? WHERE BanID = ?",Arrays.asList(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(endTime)),banid));
     }

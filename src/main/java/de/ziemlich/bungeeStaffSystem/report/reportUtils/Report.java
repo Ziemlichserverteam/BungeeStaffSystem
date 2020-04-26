@@ -13,9 +13,9 @@ public class Report {
     private UUID moderatorUUID;
     private ReportReason reason;
     private ReportState state;
-    private int reportId;
+    private String reportId;
 
-    public Report(UUID reportedPlayerUUID, UUID reportedByUUID, UUID moderatorUUID, ReportReason reason, ReportState state, int reportId) {
+    public Report(UUID reportedPlayerUUID, UUID reportedByUUID, UUID moderatorUUID, ReportReason reason, ReportState state, String reportId) {
         this.reportedPlayerUUID = reportedPlayerUUID;
         this.reportedByUUID = reportedByUUID;
         this.reason = reason;
@@ -48,7 +48,7 @@ public class Report {
         return state;
     }
 
-    public int getReportId() {
+    public String getReportId() {
         return reportId;
     }
 
@@ -72,7 +72,7 @@ public class Report {
         this.state = state;
     }
 
-    public void setReportId(int reportId) {
+    public void setReportId(String reportId) {
         this.reportId = reportId;
     }
 

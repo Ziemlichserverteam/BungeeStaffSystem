@@ -1,7 +1,12 @@
 package de.ziemlich.bungeeStaffSystem.report.commands;
 
+import de.ziemlich.bungeeStaffSystem.ids.ID;
+import de.ziemlich.bungeeStaffSystem.ids.IDTypes;
 import de.ziemlich.bungeeStaffSystem.report.ReportManager;
+import de.ziemlich.bungeeStaffSystem.report.db.ReportDAO;
 import de.ziemlich.bungeeStaffSystem.report.reportUtils.Report;
+import de.ziemlich.bungeeStaffSystem.report.reportUtils.ReportReason;
+import de.ziemlich.bungeeStaffSystem.report.reportUtils.ReportState;
 import de.ziemlich.bungeeStaffSystem.utils.StaffSystemManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -64,8 +69,8 @@ public class ReportCMD extends Command {
             return;
         }
 
-        Report report = new Report(reported, reportedBy, args[1].toUpperCase());
-        report.create();
+        Report report = new Report(reported.getUniqueId(), reportedBy.getUniqueId(), null, ReportReason.BUILDING, ReportState.WAITING, new ID(IDTypes.REPORTID).createID());
+        ReportDAO.getInstance().createReport(report);
 
         reportedBy.sendMessage(new TextComponent(prefix + "§aVielen Dank für deine Hilfe! §7Wir werden uns so schnell wie möglich darum kümmern!"));
 

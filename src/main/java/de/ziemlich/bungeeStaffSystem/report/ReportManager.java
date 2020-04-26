@@ -1,6 +1,13 @@
 package de.ziemlich.bungeeStaffSystem.report;
 
 import de.ziemlich.bungeeStaffSystem.StaffSystem;
+import de.ziemlich.bungeeStaffSystem.accountsystem.db.AccountDAO;
+import de.ziemlich.bungeeStaffSystem.punishsystem.db.AdminDAO;
+import de.ziemlich.bungeeStaffSystem.punishsystem.db.BanDAO;
+import de.ziemlich.bungeeStaffSystem.punishsystem.db.MuteDAO;
+import de.ziemlich.bungeeStaffSystem.punishsystem.listener.ChannelListener;
+import de.ziemlich.bungeeStaffSystem.punishsystem.listener.JoinEvent;
+import de.ziemlich.bungeeStaffSystem.punishsystem.listener.MessageEvent;
 import de.ziemlich.bungeeStaffSystem.report.commands.ReportCMD;
 import de.ziemlich.bungeeStaffSystem.report.commands.ReportsCMD;
 import de.ziemlich.bungeeStaffSystem.report.listeners.JoinListener;
@@ -31,6 +38,13 @@ public class ReportManager {
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new ReportsCMD("reports"));
         //ProxyServer.getInstance().getPluginManager().registerListener(StaffSystem.getInstance(), new QuitListener());
         //ProxyServer.getInstance().getPluginManager().registerListener(StaffSystem.getInstance(), new JoinListener());
+        ProxyServer.getInstance().getPluginManager().registerListener(StaffSystem.getInstance(), new JoinEvent());
+        ProxyServer.getInstance().getPluginManager().registerListener(StaffSystem.getInstance(), new MessageEvent());
+        ProxyServer.getInstance().getPluginManager().registerListener(StaffSystem.getInstance(), new ChannelListener());
+        BanDAO.getInstance().loadTable();
+        MuteDAO.getInstance().loadTable();
+        AdminDAO.INSTANCE.loadUnbannableTable();
+        AccountDAO.getInstance().loadTableStaff();
 
         createReportTable();
         loadReportReasons();

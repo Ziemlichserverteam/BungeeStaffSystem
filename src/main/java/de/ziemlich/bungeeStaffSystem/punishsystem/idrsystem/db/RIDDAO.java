@@ -22,7 +22,7 @@ public class RIDDAO {
     private SQL sql = StaffSystemManager.ssm.getMainSQL();
 
     public void loadTable() {
-        sql.executeUpdate("CREATE TABLE IF NOT EXISTS rids(ID int(35),reason VARCHAR(255), type VARCHRAR(20), length LONG)", null);
+        sql.executeUpdate("CREATE TABLE IF NOT EXISTS rids(ID int(35),reason VARCHAR(255), type VARCHAR(20), length LONG)", null);
     }
 
     public void addID(RID rid) {
@@ -42,7 +42,7 @@ public class RIDDAO {
             int id = rs.getInt("ID");
             String reason = rs.getString("reason");
             Type type = Type.valueOf(rs.getString("type"));
-            long length = rs.getLong("length");
+            String length = rs.getString("length");
             tempList.add(new RID(id,length,reason,type));
         }
         rs.close();
@@ -56,7 +56,7 @@ public class RIDDAO {
             int rid = rs.getInt("ID");
             String reason = rs.getString("reason");
             Type type = Type.valueOf(rs.getString("type"));
-            long length = rs.getLong("length");
+            String length = rs.getString("length");
             rs.close();
             return new RID(id,length,reason,type);
         }
