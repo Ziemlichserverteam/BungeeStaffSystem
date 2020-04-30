@@ -23,7 +23,16 @@ public class QuitListener implements Listener {
     public void onQuit(PlayerDisconnectEvent e) {
 
 
-        //ReportManager.rm.changeOnlineState(target);
+        ProxiedPlayer p = e.getPlayer();
+
+        try {
+            if(ReportDAO.getInstance().isModerator(p.getUniqueId())) {
+                Report report = ReportDAO.getInstance().getReportForModerator(p.getUniqueId());
+                ReportDAO.getInstance().setModerator(null,report.getReportId());
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
 
     }
 

@@ -2,6 +2,7 @@ package de.ziemlich.bungeeStaffSystem.report.reportUtils;
 
 import de.ziemlich.bungeeStaffSystem.utils.UUIDFetcher;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class Report {
@@ -11,11 +12,13 @@ public class Report {
     private UUID reportedPlayerUUID;
     private UUID reportedByUUID;
     private UUID moderatorUUID;
-    private ReportReason reason;
+    private String reason;
     private ReportState state;
     private String reportId;
+    private int amount;
+    private boolean view;
 
-    public Report(UUID reportedPlayerUUID, UUID reportedByUUID, UUID moderatorUUID, ReportReason reason, ReportState state, String reportId) {
+    public Report(UUID reportedPlayerUUID, UUID reportedByUUID, @Nullable UUID moderatorUUID, String reason, ReportState state, String reportId, int amount, boolean view) {
         this.reportedPlayerUUID = reportedPlayerUUID;
         this.reportedByUUID = reportedByUUID;
         this.reason = reason;
@@ -26,6 +29,24 @@ public class Report {
         }
         this.state = state;
         this.reportId = reportId;
+        this.amount = amount;
+        this.view = view;
+    }
+
+    public boolean isView() {
+        return view;
+    }
+
+    public void setView(boolean view) {
+        this.view = view;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 
     public UUID getReportedPlayerUUID() {
@@ -40,7 +61,7 @@ public class Report {
         return this.moderatorUUID;
     }
 
-    public ReportReason getReason() {
+    public String getReason() {
         return this.reason;
     }
 
@@ -64,7 +85,7 @@ public class Report {
         this.moderatorUUID = moderatorUUID;
     }
 
-    public void setReason(ReportReason reason) {
+    public void setReason(String reason) {
         this.reason = reason;
     }
 

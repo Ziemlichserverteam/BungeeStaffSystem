@@ -15,11 +15,11 @@ public class AdminDAO {
 
 
     public void addPlayer(UUID uuid) throws SQLException {
-        StaffSystemManager.ssm.getMainSQL().executeUpdate("INSERT INTO unbannable(UUID) VALUES(?)", Arrays.asList(uuid.toString()));
+        StaffSystemManager.ssm.getMainSQL().executeUpdate("INSERT INTO unbannable(UUID) VALUES(?)", uuid.toString());
     }
 
     public void removePlayer(UUID uuid) throws SQLException {
-        StaffSystemManager.ssm.getMainSQL().executeUpdate("DELETE FROM unbannable WHERE UUID = ?",Arrays.asList(uuid.toString()));
+        StaffSystemManager.ssm.getMainSQL().executeUpdate("DELETE FROM unbannable WHERE UUID = ?",uuid.toString());
     }
 
     public UUID getPlayerUnbannable(UUID uuid) throws SQLException {
@@ -38,6 +38,6 @@ public class AdminDAO {
     }
 
     public void loadUnbannableTable() {
-        StaffSystemManager.ssm.getMainSQL().executeUpdate("CREATE TABLE IF NOT EXISTS unbannable(UUID VARCHAR(36) PRIMARY KEY)",null);
+        StaffSystemManager.ssm.getMainSQL().executeUpdate("CREATE TABLE IF NOT EXISTS unbannable(UUID VARCHAR(36) PRIMARY KEY)");
     }
 }

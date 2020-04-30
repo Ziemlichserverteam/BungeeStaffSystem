@@ -89,25 +89,11 @@ public class SQL {
         return null;
     }
 
-    public void executeUpdate(String query, List<Object> values) {
+    public void executeUpdate(String query, Object... obj) {
         try {
             PreparedStatement ps = getConnection().prepareStatement(query);
-            if(values != null) {
-                int stmts = values.size();
-                for(int i = 1; i <= stmts; i++) {
-                    Object obj = values.get(i-1);
-                    if(obj instanceof String || obj instanceof UUID) {
-                        ps.setString(i, obj.toString());
-                    } else if(obj instanceof Integer) {
-                        ps.setInt(i, Integer.parseInt(obj.toString()));
-                    } else if(obj instanceof Long) {
-                        ps.setLong(i, Long.parseLong(obj.toString()));
-                    } else if(obj instanceof Boolean) {
-                        ps.setInt(i, (Boolean.getBoolean(obj.toString()) ? 1 : 0));
-                    } else {
-                        ps.setString(i, obj.toString());
-                    }
-                }
+            for(int i = 0; i < obj.length; i++) {
+                ps.setObject(i + 1, obj[i]);
             }
             ps.executeUpdate();
             ps.close();
@@ -155,7 +141,7 @@ public class SQL {
                     } else if(obj instanceof Boolean) {
                         ps.setInt(i, (Boolean.getBoolean(obj.toString()) ? 1 : 0));
                     } else {
-                        ps.setString(i, obj.toString());
+                        ps.setObject(i, obj);
                     }
                 }
             }

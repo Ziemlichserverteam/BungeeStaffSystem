@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class MessageEvent implements Listener {
 
     @EventHandler
-    public void onMessage(ChatEvent e) {
+    public void onChat(ChatEvent e) {
 
         ProxiedPlayer p = (ProxiedPlayer) e.getSender();
 

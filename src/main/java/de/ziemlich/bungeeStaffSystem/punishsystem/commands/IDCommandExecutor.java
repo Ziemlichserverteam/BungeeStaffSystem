@@ -3,6 +3,7 @@ package de.ziemlich.bungeeStaffSystem.punishsystem.commands;
 import de.ziemlich.bungeeStaffSystem.punishsystem.commands.subcommand.IdCreateSubCommand;
 import de.ziemlich.bungeeStaffSystem.punishsystem.commands.subcommand.IdDeleteSubCommand;
 import de.ziemlich.bungeeStaffSystem.punishsystem.commands.subcommand.IdEditSubCommand;
+import de.ziemlich.bungeeStaffSystem.punishsystem.commands.subcommand.IdListSubCommand;
 import de.ziemlich.bungeeStaffSystem.report.ReportManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -14,7 +15,7 @@ public class IDCommandExecutor extends Command {
         super(name);
     }
 
-    String prefix = ReportManager.rm.reportPrefix;
+    String prefix = "§8[§4ID§8] ";
 
     @Override
     public void execute(CommandSender sender, String[] args) {
@@ -26,8 +27,8 @@ public class IDCommandExecutor extends Command {
 
         // /id <create|edit|delete> <id> <reason>
 
-        if(args.length < 2) {
-            sender.sendMessage(new TextComponent(prefix + "§cNutze /id <create|edit|delete> <id> <reason>!"));
+        if(args.length < 1) {
+            sender.sendMessage(new TextComponent(prefix + "§cNutze /id <create|edit|delete|list> <id> <reason>!"));
             return;
         }
 
@@ -43,7 +44,11 @@ public class IDCommandExecutor extends Command {
             new IdDeleteSubCommand(sender,args);
             return;
         }
+        if(args[0].equalsIgnoreCase("list")) {
+            new IdListSubCommand(sender,args);
+            return;
+        }
 
-        sender.sendMessage(new TextComponent(prefix + "§cNutze /id <create|edit|delete> <id> <reason>!"));
+        sender.sendMessage(new TextComponent(prefix + "§cNutze /id <create|edit|delete|list> <id> <reason>!"));
     }
 }

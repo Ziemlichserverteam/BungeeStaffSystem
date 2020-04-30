@@ -1,5 +1,7 @@
 package de.ziemlich.bungeeStaffSystem.punishsystem;
 
+import java.time.Duration;
+
 public class PunishManager {
 
     public static boolean validTime(String time) {
@@ -23,8 +25,8 @@ public class PunishManager {
         if (time.endsWith("mo")) {
             return true;
         }
-        if (!time.endsWith("p")) return false;
-        if (!time.endsWith("permanent")) return false;
+        if (time.endsWith("p")) return true;
+        if (time.endsWith("permanent")) return true;
         return true;
     }
 
@@ -37,28 +39,28 @@ public class PunishManager {
         Long result = 0L;
         if (time.endsWith("s")) {
             edit = time.substring(0, time.length() - 1);
-            result = Long.parseLong(edit) * 1000L;
+            result = Duration.ofSeconds(Long.parseLong(edit)).toMillis();
         }
         if (time.endsWith("min")) {
             edit = time.substring(0, time.length() - 3);
-            result = Long.parseLong(edit) * 60L * 1000L;
+            result = Duration.ofMinutes(Long.parseLong(edit)).toMillis();
         }
         if (time.endsWith("h")) {
             edit = time.substring(0, time.length() - 1);
-            result = Long.parseLong(edit) * 60L * 60L * 1000L;
+            result = Duration.ofHours(Long.parseLong(edit)).toMillis();
         }
         if (time.endsWith("d")) {
             edit = time.substring(0, time.length() - 1);
-            result = Long.parseLong(edit) * 24L * 60L * 60L * 1000L;
+            result = Duration.ofDays(Long.parseLong(edit)).toMillis();
         }
-        if (!time.endsWith("m")) return result;
-        edit = time.substring(0, time.length() - 1);
-        return Long.parseLong(edit) * 31L * 24L * 60L * 60L * 1000L;
+        if (!time.endsWith("mo")) return result;
+        edit = time.substring(0, time.length() - 2);
+        return Duration.ofDays(Long.parseLong(edit) * 30).toMillis();
     }
 
     public static String banScreen() {
 
-        String banScreen = "§3Ziemlich.eu \n \n&8================\n\n§cDu wurdest gebannt!\n&7Grund: &e%grund%§n\n§7Bis: §e%date%\n§7BanID: §e%id%\n§7Unban: §eunban@ziemlich.eu\n\n&8================\n\n§3Ziemlich.eu";
+        String banScreen = "§3Ziemlich.eu \n \n§8================\n\n§cDu wurdest gebannt!\n§7Grund: §e%grund%§n\n§7Bis: §e%date%\n§7BanID: §e%id%\n§7Unban: §eunban@ziemlich.eu\n\n§8================\n\n§3Ziemlich.eu";
         return banScreen;
 
     }

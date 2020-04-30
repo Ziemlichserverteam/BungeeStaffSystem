@@ -15,6 +15,7 @@ import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -32,14 +33,24 @@ public class ChannelListener implements Listener {
                 String reason = in.readUTF();
                 String punisher = in.readUTF();
                 String time = in.readUTF();
-                Ban ban = new Ban(new ID(IDTypes.PUNISHID).createID(), UUIDFetcher.getUUID(target), reason, System.currentTimeMillis() + PunishManager.timeToMilliSeconds(time), punisher, System.currentTimeMillis(), Type.BAN, false, new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(System.currentTimeMillis() + PunishManager.timeToMilliSeconds(time))),true);
-                BanDAO.getInstance().createBan(ban);
+            Ban ban = null;
+            try {
+                ban = new Ban(new ID(IDTypes.PUNISHID).createID(), UUIDFetcher.getUUID(target), reason, System.currentTimeMillis() + PunishManager.timeToMilliSeconds(time), punisher, System.currentTimeMillis(), Type.BAN, false, new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(System.currentTimeMillis() + PunishManager.timeToMilliSeconds(time))),true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            BanDAO.getInstance().createBan(ban);
         }else if(subChannel.equalsIgnoreCase("mute")) {
             String target = in.readUTF();
             String reason = in.readUTF();
             String punisher = in.readUTF();
             String time = in.readUTF();
-            Mute mute = new Mute(new ID(IDTypes.PUNISHID).createID(), UUIDFetcher.getUUID(target), reason, System.currentTimeMillis() + PunishManager.timeToMilliSeconds(time), punisher, System.currentTimeMillis(), Type.BAN, false, new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(System.currentTimeMillis() + PunishManager.timeToMilliSeconds(time))),true);
+            Mute mute = null;
+            try {
+                mute = new Mute(new ID(IDTypes.PUNISHID).createID(), UUIDFetcher.getUUID(target), reason, System.currentTimeMillis() + PunishManager.timeToMilliSeconds(time), punisher, System.currentTimeMillis(), Type.BAN, false, new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(System.currentTimeMillis() + PunishManager.timeToMilliSeconds(time))),true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             MuteDAO.getInstance().createMute(mute);
         }
     }

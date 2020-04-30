@@ -22,19 +22,19 @@ public class RIDDAO {
     private SQL sql = StaffSystemManager.ssm.getMainSQL();
 
     public void loadTable() {
-        sql.executeUpdate("CREATE TABLE IF NOT EXISTS rids(ID int(35),reason VARCHAR(255), type VARCHAR(20), length LONG)", null);
+        sql.executeUpdate("CREATE TABLE IF NOT EXISTS rids(ID int(35) PRIMARY KEY,reason VARCHAR(255), type VARCHAR(20), length LONG)");
     }
 
     public void addID(RID rid) {
-        sql.executeUpdate("INSERT INTO rids(ID, reason, type, length) VALUES(?,?,?,?))", Arrays.asList(rid.getId(),rid.getReason(),rid.getType().toString(), rid.getLength()));
+        sql.executeUpdate("INSERT INTO rids(ID, reason, type, length) VALUES(?,?,?,?)", rid.getId(),rid.getReason(),rid.getType().toString(), rid.getLength());
     }
 
     public void removeID(int id) {
-        sql.executeUpdate("DELETE FROM rids WHERE ID = ?", Arrays.asList(id));
+        sql.executeUpdate("DELETE FROM rids WHERE ID = ?", id);
     }
 
     public List<RID> getAllRIDS() throws SQLException {
-        ResultSet rs = sql.getResult("SELECT * FROM rids",null);
+        ResultSet rs = sql.getResult("SELECT * FROM rids ORDER BY ID ASC",null);
 
         List<RID> tempList = new ArrayList<>();
 
@@ -64,8 +64,17 @@ public class RIDDAO {
         return null;
     }
 
+    public RID getRidForReason(String reason) throws SQLException {
+        for(RID rid : getAllRIDS()) {
+            if(rid.getReason().equalsIgnoreCase(reason)) {
+                return rid;
+            }
+        }
+        return null;
+    }
+
     public void updateRID(RID rid) {
-        sql.executeUpdate("UPDATE rids SET reason = ?, type = ? WHERE ID = ?", Arrays.asList(rid.getReason(),rid.getType(),rid.getId()));
+        sql.executeUpdate("UPDATE rids SET reason = ?, type = ? WHERE ID = ?", rid.getReason(),rid.getType(),rid.getId());
     }
 
     public boolean doesIDExist(int id) throws SQLException {

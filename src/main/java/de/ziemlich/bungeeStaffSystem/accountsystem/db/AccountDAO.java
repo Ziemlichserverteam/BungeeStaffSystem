@@ -22,11 +22,11 @@ public class AccountDAO {
     private static SQL sql = StaffSystemManager.ssm.getMainSQL();
 
     public void createAccount(Account account) {
-        sql.executeUpdate("INSERT INTO accounts(UUID,Password,Salt,Rank,Grouppower) VALUES (?,?,?,?,?)", Arrays.asList(account.getUuid().toString(),account.getPassword(),account.getSalt(), account.getRank(),account.getGroupPower()));
+        sql.executeUpdate("INSERT INTO accounts(UUID,Password,Salt,Rank,Grouppower) VALUES (?,?,?,?,?)", account.getUuid().toString(),account.getPassword(),account.getSalt(), account.getRank(),account.getGroupPower());
     }
 
     public void updateAccount(Account account) {
-        sql.executeUpdate("UPDATE accounts SET Password = ?, Rank = ?, Grouppower = ? WHERE UUID = ?",Arrays.asList(account.getPassword(),account.getRank(),account.getGroupPower(),account.getUuid().toString()));
+        sql.executeUpdate("UPDATE accounts SET Password = ?, Rank = ?, Grouppower = ? WHERE UUID = ?",account.getPassword(),account.getRank(),account.getGroupPower(),account.getUuid().toString());
     }
     public Account getAccount(UUID uuid) throws SQLException{
         ResultSet rs = sql.getResult("SELECT * FROM accounts where UUID = ?", Arrays.asList(uuid.toString()));
@@ -91,8 +91,7 @@ public class AccountDAO {
     }
 
     public void loadTableStaff() {
-        sql.executeUpdate("CREATE TABLE IF NOT EXISTS accounts(UUID VARCHAR(36) PRIMARY KEY, Password VARCHAR(100), Salt VARCHAR(20), Rank VARCHAR(16), Grouppower INT(5))",null);
-
+        sql.executeUpdate("CREATE TABLE IF NOT EXISTS accounts(UUID VARCHAR(36) PRIMARY KEY, Password VARCHAR(100), Salt VARCHAR(20), Rank VARCHAR(16), Grouppower INT(5))");
     }
 
 

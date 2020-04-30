@@ -17,11 +17,11 @@ public class BanDAO {
     }
 
     public void loadTable() {
-        StaffSystemManager.ssm.getMainSQL().executeUpdate("CREATE TABLE IF NOT EXISTS bans(BanID INT(10) PRIMARY KEY, UUID VARCHAR(36), Reason VARCHAR(50), endTime LONG, Punisher VARCHAR(16),  timeStamp VARCHAR(50), Type VARCHAR(5), Permanent BOOLEAN, Unbanned VARCHAR(50), Active BOOLEAN)",null);
+        StaffSystemManager.ssm.getMainSQL().executeUpdate("CREATE TABLE IF NOT EXISTS bans(BanID VARCHAR(10) PRIMARY KEY, UUID VARCHAR(36), Reason VARCHAR(50), endTime LONG, Punisher VARCHAR(16),  timeStamp VARCHAR(50), Type VARCHAR(5), Permanent BOOLEAN, Unbanned VARCHAR(50), Active BOOLEAN)");
     }
 
     public void createBan(Ban ban) {
-        StaffSystemManager.ssm.getMainSQL().executeUpdate("INSERT INTO bans(BanID, UUID, Reason, endTime, Punisher, timeStamp, Type, Permanent, Unbanned, Active) VALUES(?, ?, ?, ?, ?,?, ?, ?,?, ?)", new ArrayList<>(Arrays.asList(                ban.getBanid(), ban.getUuid().toString(), ban.getReason(), ban.getEndTime(), ban.getPunisher(), ban.getTimestamp(), ban.getType().toString(),ban.isPermanent(), ban.getUnbannendDate(), ban.isActive())));
+        StaffSystemManager.ssm.getMainSQL().executeUpdate("INSERT INTO bans(BanID, UUID, Reason, endTime, Punisher, timeStamp, Type, Permanent, Unbanned, Active) VALUES(?, ?, ?, ?, ?,?, ?, ?,?, ?)", ban.getBanid(), ban.getUuid().toString(), ban.getReason(), ban.getEndTime(), ban.getPunisher(), ban.getTimestamp(), ban.getType().toString(),ban.isPermanent(), ban.getUnbannendDate(), ban.isActive());
     }
 
     public Ban getBan(String banID) throws SQLException {
@@ -58,8 +58,7 @@ public class BanDAO {
     }
 
     public List<Ban> getAllBans(UUID uuid) throws SQLException {
-
-        ResultSet rs =  StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM bans WHERE BanID = ?", Arrays.asList(uuid.toString()));
+        ResultSet rs =  StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM bans WHERE UUID = ?", Arrays.asList(uuid.toString()));
         ArrayList<Ban> bans = new ArrayList();
         while(rs.next()) {
             String banID = rs.getString("BanID");
@@ -86,31 +85,60 @@ public class BanDAO {
         return bans;
     }
 
+    public List<Ban> getAllBans() throws SQLException {
+
+        ResultSet rs =  StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM bans",null);
+        ArrayList<Ban> bans = new ArrayList();
+        while(rs.next()) {
+            String banID = rs.getString("BanID");
+            String reason = rs.getString("Reason");
+            long endTime = rs.getLong("endTime");
+            String Punisher = rs.getString("Punisher");
+            long timeStamp = rs.getLong("timeStamp");
+            Type type;
+            try{
+                type = Type.valueOf(rs.getString("Type"));
+            }catch (Exception e) {
+                rs.close();
+                throw new SQLException("Invalid type! Please check your DataBase!");
+            }
+
+            UUID uuid = UUID.fromString(rs.getString("uuid"));
+            boolean permanent = rs.getBoolean("Permanent");
+            String unbannend = rs.getString("Unbanned");
+            boolean active = rs.getBoolean("Active");
+            bans.add(new Ban(banID, uuid, reason, endTime, Punisher, timeStamp, type, permanent, unbannend, active));
+        }
+
+        rs.close();
+        return bans;
+    }
+
 
     public boolean hadBeenBanned(UUID uuid) throws SQLException {
         return !getAllBans(uuid).isEmpty();
     }
 
-    public void removeBan(int banID) {
-        StaffSystemManager.ssm.getMainSQL().executeUpdate("DELETE FROM bans WHERE BanID = ?",Arrays.asList(banID));
+    public void removeBan(String banID) {
+        StaffSystemManager.ssm.getMainSQL().executeUpdate("DELETE FROM bans WHERE BanID = ?",(banID));
     }
 
     public void removeAllBansFromPlayer(UUID uuid) {
-        StaffSystemManager.ssm.getMainSQL().executeUpdate("DELETE FROM bans WHERE UUID = ?",Arrays.asList(uuid.toString()));
+        StaffSystemManager.ssm.getMainSQL().executeUpdate("DELETE FROM bans WHERE UUID = ?",(uuid.toString()));
     }
 
     public void setBanActivity(boolean activ, String banID) {
-        StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE bans SET Active = ? WHERE BanID = ?",Arrays.asList(activ,banID));
+        StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE bans SET Active = ? WHERE BanID = ?",activ,banID);
     }
 
     public void setBanPermanent(boolean permanent, String banID) {
-        StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE bans SET Permanent = ? WHERE BanID = ?",Arrays.asList(permanent,banID));
+        StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE bans SET Permanent = ? WHERE BanID = ?",permanent,banID);
     }
 
 
     public void setBanEndTime(long endTime, String banid) {
-        StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE bans SET endTime = ? WHERE BanID = ?",Arrays.asList(endTime,banid));
-        StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE bans SET Unbanned = ? WHERE BanID = ?",Arrays.asList(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(endTime)),banid));
+        StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE bans SET endTime = ? WHERE BanID = ?",endTime,banid);
+        StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE bans SET Unbanned = ? WHERE BanID = ?",new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(endTime)),banid);
     }
 
     public boolean hasActiveBans(UUID uuid) throws SQLException {
