@@ -22,9 +22,7 @@ public class LogDAO {
     }
 
     public void createLog(String id, ProxiedPlayer p, ChatLog log) throws SQLException {
-        System.out.println(log.getMessages().size());
         for(int i = log.getMessages().size(); i > 0; i--) {
-            System.out.print(1);
             StaffSystemManager.ssm.getMainSQL().executeUpdate("INSERT INTO logs(UUID, timeStamp, message, logID) VALUES(?, ?, ?, ?)",p.getUniqueId().toString(), log.getTimes().get(i - 1), log.getMessages().get(i - 1), id);
         }
     }
@@ -51,11 +49,11 @@ public class LogDAO {
         StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE logs SET logID = ? WHERE logID = ?",newID,Integer.toString(newID));
     }
 
-    public List<Integer> getStoredLogsIDs() throws SQLException {
-        List<Integer> ids = new ArrayList<>();
+    public List<String> getStoredLogsIDs() throws SQLException {
+        List<String> ids = new ArrayList<>();
         ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM logs", null);
         while(rs.next()) {
-            int id = rs.getInt("logID");
+            String id = rs.getString("logID");
             if(!ids.contains(id)) ids.add(id);
         }
         rs.close();

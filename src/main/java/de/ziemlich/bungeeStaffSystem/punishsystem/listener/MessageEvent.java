@@ -30,7 +30,7 @@ public class MessageEvent implements Listener {
                             }else{
                                 timeDisplay = mute.getUnbannendDate();
                             }
-                            p.sendMessage(new TextComponent("§cDu wurdest gemutet. §7Bis: §e" + timeDisplay + " §7Grund: §e" + mute.getReason() + " §7MuteID: §e" + mute.getReason()));
+                            p.sendMessage(new TextComponent("§cDu wurdest gemutet. §7Bis: §e" + timeDisplay + " §7Grund: §e" + mute.getReason() + " §7MuteID: §e" + mute.getBanid()));
                         }else{
                             MuteDAO.INSTANCE.setMuteActivity(false, mute.getBanid());
                         }

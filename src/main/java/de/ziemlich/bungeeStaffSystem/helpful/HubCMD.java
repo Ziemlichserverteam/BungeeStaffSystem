@@ -14,20 +14,16 @@ public class HubCMD extends Command {
         super(name, allias1, allias2);
     }
 
-    private String lobbyName = "lobby";
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(sender instanceof ProxiedPlayer) {
-            ProxiedPlayer p = (ProxiedPlayer)sender;
-            if(!p.getServer().getInfo().getName().contains(lobbyName)) {
-                ServerInfo lobbyInfo = ProxyServer.getInstance().getServerInfo(lobbyName);
-                p.connect(lobbyInfo);
-            } else {
-                sender.sendMessage(new TextComponent(StaffSystemManager.ssm.prefix + "§cDu bist bereits in der Lobby!"));
-            }
-        } else {
-            sender.sendMessage(new TextComponent(StaffSystemManager.ssm.prefix + "§cDieser Befehl kann nur von Spieler ausgeführt werden!"));
+
+        if(!(sender instanceof  ProxiedPlayer)) {
+            sender.sendMessage(new TextComponent("You must be a player to execute this command."));
+            return;
         }
+
+
+
     }
 }

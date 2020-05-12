@@ -18,6 +18,11 @@ public class IdCreateSubCommand {
 
     private void execute(CommandSender sender, String[] args) {
 
+        if(!sender.hasPermission("staffsystem.cmd.id.create")) {
+            sender.sendMessage(new TextComponent("§cKeine Rechte!"));
+            return;
+        }
+
 
         if(args.length < 4) {
             sender.sendMessage(new TextComponent("§cNutze /id <create> <id> <tpye> <length> <reason...>"));

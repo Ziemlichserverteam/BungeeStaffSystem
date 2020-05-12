@@ -28,7 +28,8 @@ public class QuitListener implements Listener {
         try {
             if(ReportDAO.getInstance().isModerator(p.getUniqueId())) {
                 Report report = ReportDAO.getInstance().getReportForModerator(p.getUniqueId());
-                ReportDAO.getInstance().setModerator(null,report.getReportId());
+                ReportDAO.getInstance().setModerator(null, report.getReportId());
+                ReportDAO.getInstance().setReportState(ReportState.WAITING, report.getReportId());
             }
         } catch (SQLException ex) {
             ex.printStackTrace();

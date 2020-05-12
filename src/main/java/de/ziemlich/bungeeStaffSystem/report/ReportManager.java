@@ -41,7 +41,7 @@ public class ReportManager {
     public void loadReportSystem() {
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new ReportCMD("report"));
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new ReportsCMD("reports"));
-        //ProxyServer.getInstance().getPluginManager().registerListener(StaffSystem.getInstance(), new QuitListener());
+        ProxyServer.getInstance().getPluginManager().registerListener(StaffSystem.getInstance(), new QuitListener());
         ProxyServer.getInstance().getPluginManager().registerListener(StaffSystem.getInstance(), new JoinListener());
         ProxyServer.getInstance().getPluginManager().registerListener(StaffSystem.getInstance(), new JoinEvent());
         ProxyServer.getInstance().getPluginManager().registerListener(StaffSystem.getInstance(), new MessageEvent());

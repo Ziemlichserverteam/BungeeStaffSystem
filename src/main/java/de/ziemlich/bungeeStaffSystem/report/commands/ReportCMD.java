@@ -49,6 +49,7 @@ public class ReportCMD extends Command {
             return;
         }
 
+
         ProxiedPlayer reported = ProxyServer.getInstance().getPlayer(args[0]);
 
         if(!(reported.isConnected())){
@@ -56,14 +57,19 @@ public class ReportCMD extends Command {
             return;
         }
 
+        if(reported.getUniqueId() == reportedBy.getUniqueId()) {
+            reportedBy.sendMessage(new TextComponent(prefix + "§cDu kannst dich nicht selbst reporten."));
+            return;
+        }
+
         if(reported.hasPermission("staffsystem.report.block")) {
-            reportedBy.sendMessage(new TextComponent(prefix + "§7Diesen Speieler kannst du nicht reporten!"));
+            reportedBy.sendMessage(new TextComponent(prefix + "§cDiesen Speieler kannst du nicht reporten!"));
             return;
         }
 
         try {
             if(ReportDAO.getInstance().hasReported(reportedBy.getUniqueId(), reported.getUniqueId())) {
-                reportedBy.sendMessage(new TextComponent(prefix + "§7Du hast §c" + reported.getName() + " §7bereits reportet!"));
+                reportedBy.sendMessage(new TextComponent(prefix + "§cDu hast §c" + reported.getName() + " §cbereits §creportet!"));
                 return;
             }
         } catch (SQLException e) {
@@ -72,17 +78,24 @@ public class ReportCMD extends Command {
             return;
         }
 
+
+
         String reason = "";
 
         for(int i = 1; i < args.length; i++) {
             reason = reason + args[i] + " ";
         }
 
+        if(ReportDAO.getInstance().reportedPlayerForReason(reportedBy.getUniqueId(), reason)) {
+            reportedBy.sendMessage(new TextComponent(prefix + "§cDu hast diesen Spieler schon für diesen §cGrund §creportet."));
+            return;
+        }
+
         if(!doesReasonExists(reason)) {
             reportedBy.sendMessage(new TextComponent(prefix + "§7Mögliche Reportgründe:"));
             try {
                 for(RID rid : RIDDAO.getInstance().getAllRIDS()) {
-                    reportedBy.sendMessage(new TextComponent("§c" + rid.getReason()));
+                    reportedBy.sendMessage(new TextComponent("§7- §c" + rid.getReason()));
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -91,6 +104,9 @@ public class ReportCMD extends Command {
             }
             return;
         }
+
+
+
 
         String id;
 
@@ -135,7 +151,7 @@ public class ReportCMD extends Command {
         }
 
 
-        reportedBy.sendMessage(new TextComponent(prefix + "§aVielen Dank für deine Hilfe! §7Wir werden uns so §aschnell §awie §amöglich §adarum kümmern!"));
+        reportedBy.sendMessage(new TextComponent(prefix + "§aVielen Dank für deine Hilfe! §aWir werden uns so §aschnell §awie §amöglich §adarum kümmern!"));
 
         for(ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
 

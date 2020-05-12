@@ -1,6 +1,12 @@
 package de.ziemlich.bungeeStaffSystem.punishsystem;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+
 import java.time.Duration;
+import java.util.Collection;
 
 public class PunishManager {
 
@@ -63,6 +69,20 @@ public class PunishManager {
         String banScreen = "§3Ziemlich.eu \n \n§8================\n\n§cDu wurdest gebannt!\n§7Grund: §e%grund%§n\n§7Bis: §e%date%\n§7BanID: §e%id%\n§7Unban: §eunban@ziemlich.eu\n\n§8================\n\n§3Ziemlich.eu";
         return banScreen;
 
+    }
+
+    public static void sendCustomData(ProxiedPlayer player, Object... obj)
+    {
+        Collection<ProxiedPlayer> networkPlayers = ProxyServer.getInstance().getPlayers();
+        // perform a check to see if globally are no players
+        if ( networkPlayers == null || networkPlayers.isEmpty()) return;
+
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        for(Object object : obj) {
+            out.writeUTF(object.toString());
+        }
+
+        player.getServer().getInfo().sendData( "c:bungeecord", out.toByteArray() );
     }
 
 }

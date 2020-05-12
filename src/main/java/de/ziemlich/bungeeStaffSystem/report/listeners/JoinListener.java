@@ -22,6 +22,8 @@ import java.util.List;
 
 public class JoinListener implements Listener {
 
+    String prefix = ReportManager.rm.reportPrefix;
+
     @EventHandler
     public void onJoin(PostLoginEvent e) {
 
@@ -34,10 +36,10 @@ public class JoinListener implements Listener {
                 if(report.getState() == ReportState.WAITING) {
                     if(p.hasPermission("staffsystem.report.receive")) {
                         ProxiedPlayer reported = StaffSystem.getInstance().getProxy().getPlayer(report.getReportedPlayerUUID());
-                        if(reported == null) return;
+                        if(reported == null) continue;
                         if(reported.isConnected()) {
                             if(!reportedPlayers.contains(reported)) {
-                                p.sendMessage(new TextComponent("§aDer Spieler " + reported.getName() + " wurde reportet und ist nun online."));
+                                p.sendMessage(new TextComponent(prefix + "§aDer Spieler " + reported.getName() + " wurde §areportet und ist nun online."));
                                 reportedPlayers.add(reported);
                                 TextComponent text = new TextComponent("§7Klicke §chier §7um diesen Report zu bearbeiten!");
                                 text.setClickEvent( new ClickEvent( ClickEvent.Action.RUN_COMMAND, "/reports accept " + report.getReportId()));
@@ -50,9 +52,7 @@ public class JoinListener implements Listener {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-
-        if(!p.hasPermission("staffsystem.report.receive")) {
-            int o = 0;
+         int o = 0;
             try {
                 for(Report report : ReportDAO.getInstance().getAllReportsOfPlayer(p.getUniqueId())) {
                     if(report.getState() == ReportState.FINISHED) {
@@ -68,12 +68,9 @@ public class JoinListener implements Listener {
                 return;
             }
             if(o == 1) {
-                p.sendMessage(new TextComponent("§aIn der Zeit als du offline warst wurde dein Report bearbeitet. Danke für deine Unterstützung."));
+                p.sendMessage(new TextComponent(prefix + "§aIn der Zeit in der du offline warst wurde dein Report §abearbeitet. §aDanke für deine Unterstützung."));
             }else{
-                p.sendMessage(new TextComponent("§aIn der Zeit als du offline warst wurden " + o + " Reports von dir bearbeitet. Danke für deine Unterstützung."));
+                p.sendMessage(new TextComponent(prefix + "§aIn der Zeit in der du offline warst wurden " + o + " §aReports von dir bearbeitet. §aDanke für deine §aUnterstützung."));
             }
-
-        }
-
     }
 }

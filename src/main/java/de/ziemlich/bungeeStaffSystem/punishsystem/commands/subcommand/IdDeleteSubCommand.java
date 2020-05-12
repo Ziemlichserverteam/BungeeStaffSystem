@@ -14,6 +14,12 @@ public class IdDeleteSubCommand {
     }
 
     private void execute(CommandSender sender, String[] args) {
+
+        if(!sender.hasPermission("staffsystem.cmd.id.delete")) {
+            sender.sendMessage(new TextComponent("§cKeine Rechte!"));
+            return;
+        }
+
         if(args.length != 2) {
             sender.sendMessage(new TextComponent("§cNutze /id <delete> <id>"));
             return;

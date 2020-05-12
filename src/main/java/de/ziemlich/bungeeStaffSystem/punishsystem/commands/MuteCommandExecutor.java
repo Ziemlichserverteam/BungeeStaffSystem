@@ -29,6 +29,7 @@ import net.md_5.bungee.api.plugin.Command;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.UUID;
 
 public class MuteCommandExecutor extends Command {
@@ -116,7 +117,7 @@ public class MuteCommandExecutor extends Command {
                     if(rid.getType() == Type.MUTE) {
                         String time = rid.getLength();
                         if(PunishManager.isPermanent(time)) time = "permanent";
-                        sender.sendMessage(new TextComponent("§7" + rid.getId() + " - §e" + rid.getType().toString() + " &7| &e" + time));
+                        sender.sendMessage(new TextComponent("§7" + rid.getId() + " - §e" + rid.getReason() + " §7| §e" + rid.getType().toString() + " §7| §e" + time));
                     }
                 }
                 return;
@@ -145,8 +146,13 @@ public class MuteCommandExecutor extends Command {
         boolean p = PunishManager.isPermanent(rid.getLength());
 
         Mute mute;
+
+        SimpleDateFormat sdf =  new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+
+        sdf.setTimeZone(TimeZone.getTimeZone("CEST"));
+
         try {
-            mute = new Mute(new ID(IDTypes.PUNISHID).createID(), uuid, rid.getReason(), System.currentTimeMillis() + PunishManager.timeToMilliSeconds(rid.getLength()), sender.getName(), System.currentTimeMillis(), rid.getType(), p, new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(System.currentTimeMillis() + PunishManager.timeToMilliSeconds(rid.getLength()))),true);
+            mute = new Mute(new ID(IDTypes.PUNISHID).createID(), uuid, rid.getReason(), System.currentTimeMillis() + PunishManager.timeToMilliSeconds(rid.getLength()), sender.getName(), System.currentTimeMillis(), rid.getType(), p, sdf.format(new Date(System.currentTimeMillis() + PunishManager.timeToMilliSeconds(rid.getLength()))) + " UTC",true);
         } catch (SQLException e) {
             e.printStackTrace();
             sender.sendMessage(new TextComponent("§cInternal error. Please contact an admin."));

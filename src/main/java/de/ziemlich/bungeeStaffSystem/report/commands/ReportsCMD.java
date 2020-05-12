@@ -24,6 +24,7 @@ import net.md_5.bungee.api.plugin.Command;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -52,7 +53,7 @@ public class ReportsCMD extends Command {
         }
 
         if(args.length == 0 || args.length >= 3) {
-            p.sendMessage(new TextComponent(prefix + "§cNutze /reports <list/accept/info>"));
+            p.sendMessage(new TextComponent(prefix + "§cNutze /reports <list/accept/info/delete/list>"));
             return;
         }
 
@@ -85,6 +86,8 @@ public class ReportsCMD extends Command {
                 return;
             }
 
+
+
             String id = args[1];
 
             try {
@@ -108,6 +111,16 @@ public class ReportsCMD extends Command {
                 return;
             }
 
+
+            try {
+                if(ReportDAO.getInstance().hasModerator(report.getReportId())) {
+                    p.sendMessage(new TextComponent(prefix + "§cDieser Report wird schon bearbeitet."));
+                    return;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
             RID rid;
             try {
                 rid = RIDDAO.getInstance().getRidForReason(report.getReason());
@@ -121,7 +134,6 @@ public class ReportsCMD extends Command {
                 p.sendMessage(new TextComponent(prefix + "§cDer Report ist fehlerhaft, bitte informiere einen admin."));
                 return;
             }
-
 
             if(rid.getType() == Type.MUTE) {
                 try {
@@ -154,11 +166,14 @@ public class ReportsCMD extends Command {
                 textC.addExtra(tc2);
                 p.sendMessage(textC);
 
+                List<ProxiedPlayer> players = new ArrayList<>();
+
                 try {
-                    for(Report report1 : ReportDAO.getInstance().getAllReports(report.getReason(), report.getReportedByUUID())) {
+                    for(Report report1 : ReportDAO.getInstance().getAllReports(report.getReason(), report.getReportedPlayerUUID())) {
                         ProxiedPlayer reporter = StaffSystem.getInstance().getProxy().getPlayer(report1.getReportedByUUID());
+                        if(reporter == null) continue;
                         if(reporter.isConnected()) {
-                            reporter.sendMessage(new TextComponent(prefix + "§aEin Moderator kümmert sich nun um deinen Report."));
+                            if(!players.contains(reporter)) players.add(reporter);
                         }
                     }
                 } catch (SQLException e) {
@@ -166,6 +181,11 @@ public class ReportsCMD extends Command {
                     sender.sendMessage(new TextComponent("§cInternal error. Please contact an admin."));
                     return;
                 }
+
+                for(ProxiedPlayer player : players) {
+                    player.sendMessage(new TextComponent(prefix + "§cDein Report wird nun von einem Moderator bearbeitet."));
+                }
+
             }else{
                 ProxiedPlayer reported = StaffSystem.getInstance().getProxy().getPlayer(report.getReportedPlayerUUID());
                 if(reported == null) {
@@ -177,7 +197,6 @@ public class ReportsCMD extends Command {
                     return;
                 }
 
-                UUID uuid = reported.getUniqueId();
 
                 try {
                     if(ReportDAO.getInstance().hasModerator(report.getReportId())) {
@@ -192,7 +211,7 @@ public class ReportsCMD extends Command {
 
 
                 if(report.getState() == ReportState.FINISHED) {
-                    p.sendMessage(new TextComponent(prefix + "§cDieser Report wurde bereits beendet"));
+                    p.sendMessage(new TextComponent(prefix + "§cDieser Report wurde bereits beendet."));
                     return;
                 }
 
@@ -204,16 +223,6 @@ public class ReportsCMD extends Command {
 
                 p.connect(reported.getServer().getInfo());
                 p.sendMessage(new TextComponent(prefix + "§aDu bearbeitest nun den Report von §7" + reported.getName() + "§a!"));
-
-
-                ProxiedPlayer reportedBy = ProxyServer.getInstance().getPlayer(report.getReportedByUUID());
-                if(reportedBy == null) {
-                    return;
-                }
-                if(!reportedBy.isConnected()){
-                    return;
-                }
-
 
                 net.md_5.bungee.api.chat.TextComponent textC = new net.md_5.bungee.api.chat.TextComponent();
                 textC.setText("§aBANNEN");
@@ -227,11 +236,15 @@ public class ReportsCMD extends Command {
                 textC.addExtra(tc3);
                 textC.addExtra(tc2);
                 p.sendMessage(textC);
+
+                List<ProxiedPlayer> players = new ArrayList<>();
+
                 try {
-                    for(Report report1 : ReportDAO.getInstance().getAllReports(report.getReason(), report.getReportedByUUID())) {
+                    for(Report report1 : ReportDAO.getInstance().getAllReports(report.getReason(), report.getReportedPlayerUUID())) {
                         ProxiedPlayer reporter = StaffSystem.getInstance().getProxy().getPlayer(report1.getReportedByUUID());
+                        if(reporter == null) continue;
                         if(reporter.isConnected()) {
-                            reporter.sendMessage(new TextComponent(prefix + "§aEin Moderator kümmert sich nun um deinen Report."));
+                            if(!players.contains(reporter)) players.add(reporter);
                         }
                     }
                 } catch (SQLException e) {
@@ -239,8 +252,12 @@ public class ReportsCMD extends Command {
                     sender.sendMessage(new TextComponent("§cInternal error. Please contact an admin."));
                     return;
                 }
-            }
 
+                for(ProxiedPlayer player : players) {
+                    player.sendMessage(new TextComponent(prefix + "§aDein Report wird nun von einem Moderator bearbeitet."));
+                }
+
+            }
         } else if(args[0].equalsIgnoreCase("finish")) {
 
             if(args.length != 2) {
@@ -251,6 +268,7 @@ public class ReportsCMD extends Command {
             try {
                 if(!ReportDAO.getInstance().isModerator(p.getUniqueId())) {
                     p.sendMessage(new TextComponent(prefix + "§cDu bearbeitest keinen Report im Moment."));
+                    return;
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -298,22 +316,34 @@ public class ReportsCMD extends Command {
                     StaffSystem.getInstance().getProxy().getPluginManager().dispatchCommand(StaffSystem.getInstance().getProxy().getConsole(), "ban " + name + " " + rid.getId());
                 }
 
+
                 ReportDAO.getInstance().setReportState(ReportState.FINISHED,report.getReportId());
 
-                ProxiedPlayer reporter = StaffSystem.getInstance().getProxy().getPlayer(report.getReportedByUUID());
+                List<ProxiedPlayer> players = new ArrayList<>();
 
-                if(reporter != null) {
-                    reporter.sendMessage(new TextComponent(prefix + "§aDein Report wurde bearbeited. Vielen dank für deine Hilfe am Netwerk.."));
-                    ReportDAO.getInstance().removeReport(report.getReportId());
+                try {
+                    for(Report report1 : ReportDAO.getInstance().getAllReports(report.getReason(),report.getReportedPlayerUUID())) {
+                        ProxiedPlayer reporter1 = StaffSystem.getInstance().getProxy().getPlayer(report1.getReportedByUUID());
+
+
+                        if(reporter1 != null) {
+                            if(!players.contains(reporter1)) players.add(reporter1);
+                            ReportDAO.getInstance().removeReport(report1.getReportId());
+                        }else{
+                            ReportDAO.getInstance().setReportState(ReportState.FINISHED,report1.getReportId());
+                        }
+
+                        for(ProxiedPlayer player : players) {
+                            player.sendMessage(new TextComponent(prefix + "§aDein Report wurde bearbeited. Vielen §adank für deine §aHilfe am Netwerk."));
+                        }
+
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
-
-                for(Report report1 : ReportDAO.getInstance().getAllReports(report.getReason(),report.getRe())) {
-
-                }
-
-
 
                 p.sendMessage(new TextComponent(prefix + "§aDer Report wurde erfolgreich geschlossen."));
+                ReportDAO.getInstance().setModerator(null,report.getReportId());
 
             }else if (args[1].equalsIgnoreCase("false")) {
                 RID rid;
@@ -329,18 +359,27 @@ public class ReportsCMD extends Command {
                     LogDAO.getInstance().removeLog(report.getReportId());
                 }
 
+                List<ProxiedPlayer> players = new ArrayList<>();
+
                 try {
-                    for(Report report1 : ReportDAO.getInstance().getAllReports(report.getReason(), report.getReportedByUUID())) {
+                    for(Report report1 : ReportDAO.getInstance().getAllReports(report.getReason(), report.getReportedPlayerUUID())) {
                         ProxiedPlayer reporter = StaffSystem.getInstance().getProxy().getPlayer(report1.getReportedByUUID());
-                        if(reporter == null) continue;
-                        if(reporter.isConnected()) {
-                            reporter.sendMessage(new TextComponent(prefix + "§aDein Report wurde bearbeited. Vielen dank für deine Hilfe am Netwerk.."));
+                        if(reporter != null) {
+
+                            if(!players.contains(reporter)) players.add(reporter);
 
                             for(Report report2 : ReportDAO.getInstance().getAllReportsForReported(report.getReportedPlayerUUID())) {
                                 ReportDAO.getInstance().removeReport(report2.getReportId());
                             }
 
                             ReportDAO.getInstance().removeReport(report.getReportId());
+                        }else{
+
+                            for(Report report2 : ReportDAO.getInstance().getAllReportsForReported(report.getReportedPlayerUUID())) {
+                                ReportDAO.getInstance().setReportState(ReportState.FINISHED,report2.getReportId());
+                            }
+
+                            ReportDAO.getInstance().setReportState(ReportState.FINISHED,report1.getReportId());
                         }
                     }
                 } catch (SQLException e) {
@@ -349,7 +388,12 @@ public class ReportsCMD extends Command {
                     return;
                 }
 
+                for(ProxiedPlayer player : players) {
+                    player.sendMessage(new TextComponent(prefix + "§aDein Report wurde bearbeited. Vielen §adank für deine §aHilfe am Netwerk."));
+                }
+
                 p.sendMessage(new TextComponent(prefix + "§aDer Report wurde geschlossen!"));
+                ReportDAO.getInstance().setModerator(null,report.getReportId());
 
                 try {
                     for(Report report1 : ReportDAO.getInstance().getAllReports(report.getReason(), report.getReportedByUUID())) {
@@ -363,12 +407,76 @@ public class ReportsCMD extends Command {
             }
 
 
+        }else if (args[0].equalsIgnoreCase("delete")) {
+
+            if(args.length != 2) {
+                p.sendMessage(new TextComponent(prefix + "§cUse /reports <finish> <reportid>"));
+                return;
+            }
+
+            String id = args[1];
+
+            try {
+                if(!ReportDAO.getInstance().doesReportExist(id)) {
+                    p.sendMessage(new TextComponent(prefix + "§cDieser Report existiert nicht"));
+                    return;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                sender.sendMessage(new TextComponent("§cInternal error. Please contact an admin."));
+                return;
+            }
+
+            Report report;
+
+            try{
+                report = ReportDAO.getInstance().getReport(id);
+            }catch (Exception e) {
+                sender.sendMessage(new TextComponent("§cInternal error. Please contact an admin."));
+                e.printStackTrace();
+                return;
+            }
+
+            List<ProxiedPlayer> players = new ArrayList<>();
+
+            try {
+                for(Report report1 : ReportDAO.getInstance().getAllReports(report.getReason(), report.getReportedPlayerUUID())) {
+                    ProxiedPlayer reporter = StaffSystem.getInstance().getProxy().getPlayer(report1.getReportedByUUID());
+                    if(reporter != null) {
+
+                        if(!players.contains(reporter)) players.add(reporter);
+
+                        for(Report report2 : ReportDAO.getInstance().getAllReportsForReported(report.getReportedPlayerUUID())) {
+                            ReportDAO.getInstance().removeReport(report2.getReportId());
+                        }
+
+                        ReportDAO.getInstance().removeReport(report.getReportId());
+                    }else{
+
+                        for(Report report2 : ReportDAO.getInstance().getAllReportsForReported(report.getReportedPlayerUUID())) {
+                            ReportDAO.getInstance().setReportState(ReportState.FINISHED,report2.getReportId());
+                        }
+
+                        ReportDAO.getInstance().setReportState(ReportState.FINISHED,report1.getReportId());
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                sender.sendMessage(new TextComponent("§cInternal error. Please contact an admin."));
+                return;
+            }
+
+            for(ProxiedPlayer player : players) {
+                player.sendMessage(new TextComponent(prefix + "§aDein Report wurde bearbeited. Vielen §adank für deine §aHilfe am Netwerk."));
+            }
+
+
+
+
         }
 
-
-
         else {
-            p.sendMessage(new TextComponent(prefix + "§cNutze /reports <finish/accept/info>"));
+            p.sendMessage(new TextComponent(prefix + "§cNutze /reports <finish/accept/info/delete/list>"));
         }
 
     }

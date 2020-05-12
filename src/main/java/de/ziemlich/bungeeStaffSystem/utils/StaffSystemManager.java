@@ -12,6 +12,7 @@ import de.ziemlich.bungeeStaffSystem.punishsystem.db.BanDAO;
 import de.ziemlich.bungeeStaffSystem.punishsystem.db.MuteDAO;
 import de.ziemlich.bungeeStaffSystem.punishsystem.idrsystem.db.RIDDAO;
 import de.ziemlich.bungeeStaffSystem.report.ReportManager;
+import de.ziemlich.bungeeStaffSystem.slotsystem.SlotManager;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.md_5.bungee.api.ProxyServer;
@@ -37,6 +38,7 @@ public class StaffSystemManager {
         MuteDAO.getInstance().loadTable();
         api = LuckPermsProvider.get();
         LogManager.load();
+        SlotManager.loadServers();
     }
 
     private SQL MainSQL;
@@ -48,7 +50,6 @@ public class StaffSystemManager {
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new BroadcastCMD("bc"));
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new FindCMD("find"));
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new HelpCMD("help"));
-        ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new HubCMD("hub", "leave", "lobby"));
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new JumpCMD("jump"));
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new MoveCMD("move"));
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new ServerCMD("server"));
@@ -62,7 +63,7 @@ public class StaffSystemManager {
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new UnmuteCommandExecutor("unmute"));
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new CheckCommandExecutor("check"));
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new DeleteCommandExecutor("delete"));
-
+        ProxyServer.getInstance().registerChannel("c:bungeecord");
     }
 
     void connectDB() {

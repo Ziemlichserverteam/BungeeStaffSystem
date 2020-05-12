@@ -14,6 +14,13 @@ public class IdEditSubCommand {
     }
 
     public void execute(CommandSender sender, String[] args) {
+
+        if(!sender.hasPermission("staffsystem.cmd.id.edit")) {
+            sender.sendMessage(new TextComponent("§cKeine Rechte!"));
+            return;
+        }
+
+
         if(args.length < 3) {
             sender.sendMessage(new TextComponent("§cNutze /id <edit> <id> <reason...>"));
             return;

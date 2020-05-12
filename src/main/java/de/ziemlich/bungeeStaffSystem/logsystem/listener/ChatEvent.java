@@ -28,6 +28,8 @@ public class ChatEvent implements Listener {
             }
         }
 
+        if(e.getMessage().startsWith("/")) return;
+
         if(!LogManager.playerMessageHashMap.containsKey(p.getUniqueId())) {
             LogManager.playerMessageHashMap.put(p.getUniqueId(), new ChatLog(new ArrayList<>(), new ArrayList<>()));
         }

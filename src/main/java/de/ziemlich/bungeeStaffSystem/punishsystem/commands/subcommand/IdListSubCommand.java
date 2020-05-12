@@ -15,6 +15,12 @@ public class IdListSubCommand {
     }
 
     public void execute(CommandSender sender, String[] args) {
+
+        if(!sender.hasPermission("staffsystem.cmd.id.list")) {
+            sender.sendMessage(new TextComponent("§cKeine Rechte!"));
+            return;
+        }
+
         try {
             for(RID rid : RIDDAO.getInstance().getAllRIDS()) {
                 String time = rid.getLength();

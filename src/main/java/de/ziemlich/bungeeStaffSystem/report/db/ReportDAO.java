@@ -155,7 +155,35 @@ public class ReportDAO {
 
     public List<Report> getAllReportsOfPlayer(UUID uuid) throws SQLException {
 
-        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM reports WHERE ReportedPlayerUUID = ?", Arrays.asList(uuid));
+        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM reports WHERE ReportedByUUID = ?", Arrays.asList(uuid.toString()));
+        ArrayList<Report> reports = new ArrayList();
+        while (rs.next()) {
+            UUID reportedPlayerUUID = UUID.fromString(rs.getString("ReportedPlayerUUID"));
+            UUID reportedByUUID = UUID.fromString(rs.getString("ReportedByUUID"));
+            UUID moderatorUUID;
+
+            if(rs.getString("ModeratorUUID")  == null) {
+                moderatorUUID = null;
+            }else {
+                moderatorUUID = UUID.fromString(rs.getString("ModeratorUUID"));
+            }
+
+            String reason = rs.getString("Reason");
+            String stateAsString = rs.getString("ReportState");
+            ReportState state = ReportState.valueOf(stateAsString);
+            String reportID = rs.getString("ReportId");
+            int amount = rs.getInt("amount");
+            boolean view = rs.getBoolean("view");
+
+            reports.add(new Report(reportedPlayerUUID, reportedByUUID, moderatorUUID, reason, state, reportID,amount,view));
+        }
+        rs.close();
+        return reports;
+    }
+
+    public List<Report> getAllReportsOfReportedPlayer(UUID uuid) throws SQLException {
+
+        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM reports WHERE ReportedPlayerUUID = ?", Arrays.asList(uuid.toString()));
         ArrayList<Report> reports = new ArrayList();
         while (rs.next()) {
             UUID reportedPlayerUUID = UUID.fromString(rs.getString("ReportedPlayerUUID"));
@@ -236,13 +264,24 @@ public class ReportDAO {
 
     public int getReportsForReasonAmount(UUID uuid, String reason) throws SQLException {
         int result = 0;
-        List<Report> reports = getAllReportsOfPlayer(uuid);
+        List<Report> reports = getAllReportsForReported(uuid);
         for (Report report : reports) {
-            if(report.getReason().equals(reason)) {
+            if(report.getReason().toUpperCase().equals(reason.toUpperCase())) {
                 result++;
             }
         }
         return result;
+    }
+
+    public boolean reportedPlayerForReason(UUID reporter, String reason) {
+        try {
+            for(Report report : getAllReportsOfPlayer(reporter)) {
+                if(report.getReportedByUUID().toString().equals(reporter.toString()) && report.getReason().equals(reason.toUpperCase())) return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public boolean isObservated(UUID uuid) {
@@ -304,15 +343,15 @@ public class ReportDAO {
     }
 
     public List<Report> getAllReports(String reason, UUID reported) throws SQLException {
-        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM reports WHERE ReportedPlayerUUID = ? AND Reason = ?", Arrays.asList(reported,reason.toUpperCase()));
+        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM reports WHERE ReportedPlayerUUID = ? AND Reason = ?", Arrays.asList(reported.toString(),reason.toUpperCase()));
         ArrayList<Report> reports = new ArrayList();
         while (rs.next()) {
             UUID reportedPlayerUUID = UUID.fromString(rs.getString("ReportedPlayerUUID"));
             UUID reportedByUUID = UUID.fromString(rs.getString("ReportedByUUID"));
             UUID moderatorUUID;
 
-            if(rs.getString("ModeratorUUID").equalsIgnoreCase("null")) {
-                moderatorUUID = UUIDFetcher.getUUID("0000");
+            if(rs.getString("ModeratorUUID") == null) {
+                moderatorUUID = null;
             }else {
                 moderatorUUID = UUID.fromString(rs.getString("ModeratorUUID"));
             }
@@ -329,7 +368,7 @@ public class ReportDAO {
     }
 
     public Report getReportForModerator(UUID moderator) throws SQLException {
-        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM reports WHERE ModeratorUUID = ?", Arrays.asList(moderator));
+        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM reports WHERE ModeratorUUID = ?", Arrays.asList(moderator.toString()));
         if (rs.next()) {
             UUID reportedPlayerUUID = UUID.fromString(rs.getString("ReportedPlayerUUID"));
             UUID reportedByUUID = UUID.fromString(rs.getString("ReportedByUUID"));
