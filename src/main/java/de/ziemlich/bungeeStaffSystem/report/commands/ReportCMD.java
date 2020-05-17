@@ -79,7 +79,6 @@ public class ReportCMD extends Command {
         }
 
 
-
         String reason = "";
 
         for(int i = 1; i < args.length; i++) {
@@ -116,7 +115,7 @@ public class ReportCMD extends Command {
 
             if(rid.getType() == Type.MUTE) {
                 if(LogManager.playerMessageHashMap.get(reported.getUniqueId()).getMessages().size() == 0)  {
-                    reportedBy.sendMessage(new TextComponent(prefix + "§cDieser Spieler hat noch keine Nachrichten §cgeschrieben. §cDu kannst ihn nicht reporten."));
+                    reportedBy.sendMessage(new TextComponent(prefix + "§cDieser Spieler hat noch keine Nachrichten §cgeschrieben. §cDu §ckannst §cihn §cnicht §creporten."));
                     return;
                 }
             }
@@ -159,8 +158,8 @@ public class ReportCMD extends Command {
                 all.sendMessage(new TextComponent("§8================================="));
                 all.sendMessage(new TextComponent("§7"));
                 all.sendMessage(new TextComponent("§8- §cNeuer Report:"));
-                all.sendMessage(new TextComponent("§8- §7Reporteter Spieler: §c" + reported.getName()));
-                all.sendMessage(new TextComponent("§8- §7Reportet von: §c" + reportedBy.getName()));
+                all.sendMessage(new TextComponent("§8- §7Reporteter Spieler: §4" + reported.getName()));
+                all.sendMessage(new TextComponent("§8- §7Von: §a" + reportedBy.getName()));
                 all.sendMessage(new TextComponent("§8- §7Grund: §e" + reason));
                 all.sendMessage(new TextComponent("§8- §7ID: §e" + id));
                 all.sendMessage(new TextComponent("§8- §7Server: §c" + reported.getServer().getInfo().getName()));

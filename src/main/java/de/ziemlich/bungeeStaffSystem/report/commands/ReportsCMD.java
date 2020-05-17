@@ -470,6 +470,8 @@ public class ReportsCMD extends Command {
                 player.sendMessage(new TextComponent(prefix + "§aDein Report wurde bearbeited. Vielen §adank für deine §aHilfe am Netwerk."));
             }
 
+            p.sendMessage(new TextComponent("§aDer Report wurde gelöscht."));
+
 
 
 

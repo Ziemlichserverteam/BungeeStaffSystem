@@ -5,6 +5,7 @@ import de.ziemlich.bungeeStaffSystem.accountsystem.commands.LoginCommandExecutor
 import de.ziemlich.bungeeStaffSystem.accountsystem.commands.PasswordCommandExecutor;
 import de.ziemlich.bungeeStaffSystem.helpful.*;
 import de.ziemlich.bungeeStaffSystem.logsystem.LogManager;
+import de.ziemlich.bungeeStaffSystem.msgsystem.MsgManager;
 import de.ziemlich.bungeeStaffSystem.mySql.SQL;
 import de.ziemlich.bungeeStaffSystem.mySql.SQLConfig;
 import de.ziemlich.bungeeStaffSystem.punishsystem.commands.*;
@@ -39,6 +40,7 @@ public class StaffSystemManager {
         api = LuckPermsProvider.get();
         LogManager.load();
         SlotManager.loadServers();
+        MsgManager.loadMsgManager();
     }
 
     private SQL MainSQL;
@@ -63,6 +65,11 @@ public class StaffSystemManager {
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new UnmuteCommandExecutor("unmute"));
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new CheckCommandExecutor("check"));
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new DeleteCommandExecutor("delete"));
+
+        ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new FarmserverCommandExecutor("farmserver","","fs","farmwelt","nether","mobs"));
+        ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new CBCommandExecutor("cb","","c","citybuild","cbreal","cbrealistic"));
+
+
         ProxyServer.getInstance().registerChannel("c:bungeecord");
     }
 

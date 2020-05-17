@@ -44,7 +44,6 @@ public class ChannelListener implements Listener {
 
             PunishManager.sendCustomData(p,"debug","received");
 
-
             return;
         }
 

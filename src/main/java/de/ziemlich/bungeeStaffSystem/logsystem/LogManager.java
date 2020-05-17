@@ -1,6 +1,7 @@
 package de.ziemlich.bungeeStaffSystem.logsystem;
 
 import de.ziemlich.bungeeStaffSystem.StaffSystem;
+import de.ziemlich.bungeeStaffSystem.logsystem.commands.LogCommandExecutor;
 import de.ziemlich.bungeeStaffSystem.logsystem.listener.ChatEvent;
 import de.ziemlich.bungeeStaffSystem.logsystem.listener.PostLoginEvent;
 import de.ziemlich.bungeeStaffSystem.logsystem.util.ChatLog;
@@ -16,6 +17,7 @@ public class LogManager {
        //loadTableLogs();
        StaffSystem.getInstance().getProxy().getPluginManager().registerListener(StaffSystem.getInstance(), new ChatEvent());
        StaffSystem.getInstance().getProxy().getPluginManager().registerListener(StaffSystem.getInstance(), new PostLoginEvent());
+       StaffSystem.getInstance().getProxy().getPluginManager().registerCommand(StaffSystem.getInstance(), new LogCommandExecutor());
 
    }
 

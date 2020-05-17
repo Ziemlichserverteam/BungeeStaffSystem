@@ -41,12 +41,23 @@ public class LogDAO {
         return new MessageLog(times,messages);
     }
 
+    public UUID getUUIDForLog(String id ) throws SQLException {
+        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM logs WHERE logID = ?", Arrays.asList(id));
+        while(rs.next()) {
+            UUID uuid = UUID.fromString(rs.getString("UUID"));
+            rs.close();
+            return uuid;
+        }
+        rs.close();
+        return null;
+    }
+
     public void removeLog(String id) {
         StaffSystemManager.ssm.getMainSQL().executeUpdate("DELETE FROM logs WHERE logID = ?", id);
     }
 
     public void storeLog(String id, int newID) {
-        StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE logs SET logID = ? WHERE logID = ?",newID,Integer.toString(newID));
+        StaffSystemManager.ssm.getMainSQL().executeUpdate("UPDATE logs SET logID = ? WHERE logID = ?",newID,id);
     }
 
     public List<String> getStoredLogsIDs() throws SQLException {
@@ -59,16 +70,4 @@ public class LogDAO {
         rs.close();
         return ids;
     }
-
-    public UUID getUUIDForID(String id) throws SQLException {
-        ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT UUID FROM logs WHERE logID = ?", Arrays.asList(id));
-        if(rs.next()) {
-            UUID player = UUID.fromString(rs.getString("UUID"));
-            rs.close();
-            return player;
-        }
-        return null;
-    }
-
-
 }
