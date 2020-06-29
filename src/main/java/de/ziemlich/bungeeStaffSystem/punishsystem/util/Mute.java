@@ -15,7 +15,6 @@ public class Mute {
     String unbannendDate;
     boolean active;
 
-
     public Mute(String banid, UUID uuid, String reason, long endTime, String punisher, long timestamp, Type type, boolean permanent, String unbannendDate, boolean active) {
         this.banid = banid;
         this.uuid = uuid;

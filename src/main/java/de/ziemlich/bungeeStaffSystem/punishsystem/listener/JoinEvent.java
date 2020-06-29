@@ -3,6 +3,7 @@ package de.ziemlich.bungeeStaffSystem.punishsystem.listener;
 import de.ziemlich.bungeeStaffSystem.punishsystem.PunishManager;
 import de.ziemlich.bungeeStaffSystem.punishsystem.db.AdminDAO;
 import de.ziemlich.bungeeStaffSystem.punishsystem.db.BanDAO;
+import de.ziemlich.bungeeStaffSystem.punishsystem.db.ChestDAO;
 import de.ziemlich.bungeeStaffSystem.punishsystem.util.Ban;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -19,6 +20,15 @@ public class JoinEvent implements Listener {
     public void onJoin(PostLoginEvent event) {
 
         ProxiedPlayer player = event.getPlayer();
+
+
+        try {
+            if(!ChestDAO.getInstance().isPlayerInDatabase(player.getUniqueId())) {
+                ChestDAO.getInstance().addPlayerToDatabase(player.getUniqueId());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         if(player.hasPermission("staffsystem.ban.ignore")) {
             try {

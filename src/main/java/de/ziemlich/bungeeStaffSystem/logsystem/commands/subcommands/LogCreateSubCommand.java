@@ -4,12 +4,14 @@ import de.ziemlich.bungeeStaffSystem.ids.ID;
 import de.ziemlich.bungeeStaffSystem.ids.IDTypes;
 import de.ziemlich.bungeeStaffSystem.logsystem.LogManager;
 import de.ziemlich.bungeeStaffSystem.logsystem.db.LogDAO;
+import de.ziemlich.bungeeStaffSystem.utils.UUIDFetcher;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class LogCreateSubCommand {
 
@@ -31,14 +33,15 @@ public class LogCreateSubCommand {
         }
 
         String stringPlayer = args[1];
-        ProxiedPlayer p = ProxyServer.getInstance().getPlayer(stringPlayer);
+        UUID uuid = UUIDFetcher.getUUID(stringPlayer);
 
-        if(p == null) {
+
+        if(uuid == null) {
             s.sendMessage(new TextComponent("§cSpieler nicht gefunden."));
             return;
         }
 
-        if(LogManager.playerMessageHashMap.get(p.getUniqueId()).getMessages().size() == 0)  {
+        if(LogManager.playerMessageHashMap.get(uuid).getMessages().size() == 0)  {
             s.sendMessage(new TextComponent("§cDieser Spieler hat noch keine Nachrichten §cgeschrieben."));
             return;
         }
@@ -49,12 +52,12 @@ public class LogCreateSubCommand {
             id = new ID(IDTypes.REPORTID).createID();
         } catch (SQLException e) {
             e.printStackTrace();
-            p.sendMessage(new TextComponent("§cInternal Error."));
+            s.sendMessage(new TextComponent("§cInternal Error."));
             return;
         }
 
         try {
-            LogDAO.getInstance().createLog(id, p, LogManager.playerMessageHashMap.get(p.getUniqueId()));
+            LogDAO.getInstance().createLog(id, uuid, LogManager.playerMessageHashMap.get(uuid));
         } catch (SQLException e) {
             e.printStackTrace();
         }

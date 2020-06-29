@@ -13,6 +13,7 @@ import de.ziemlich.bungeeStaffSystem.punishsystem.util.Type;
 import de.ziemlich.bungeeStaffSystem.utils.UUIDFetcher;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -45,6 +46,27 @@ public class ChannelListener implements Listener {
             PunishManager.sendCustomData(p,"debug","received");
 
             return;
+        }
+
+        if(subChannel.equalsIgnoreCase("event")) {
+            String eventType = in.readUTF();
+            String server = in.readUTF();
+            String sender = in.readUTF();
+            if(server.equalsIgnoreCase("farmserver")) {
+                ServerInfo info = ProxyServer.getInstance().getServerInfo("cbrealistic");
+                if(info.getPlayers().size() == 0) return;
+                for(ProxiedPlayer player : info.getPlayers()) {
+                    PunishManager.sendCustomData(player,"event",eventType, "proxy",sender);
+                    break;
+                }
+            }else{
+                ServerInfo info = ProxyServer.getInstance().getServerInfo("farmserver");
+                if(info.getPlayers().size() == 0) return;
+                for(ProxiedPlayer player : info.getPlayers()) {
+                    PunishManager.sendCustomData(player,"event",eventType, "proxy",sender);
+                    break;
+                }
+            }
         }
 
 

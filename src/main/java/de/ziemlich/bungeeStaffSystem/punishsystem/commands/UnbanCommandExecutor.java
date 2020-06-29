@@ -70,6 +70,8 @@ public class UnbanCommandExecutor extends Command {
             return;
         }
 
+        System.out.println(sender.getName() + " unbanned " + args[0]);
+
         sender.sendMessage(new TextComponent(prefix + "§aDer Spieler wurde erfolgreich entbannt."));
         return;
 

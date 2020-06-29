@@ -27,6 +27,12 @@ public class LogDAO {
         }
     }
 
+    public void createLog(String id, UUID p, ChatLog log) throws SQLException {
+        for(int i = log.getMessages().size(); i > 0; i--) {
+            StaffSystemManager.ssm.getMainSQL().executeUpdate("INSERT INTO logs(UUID, timeStamp, message, logID) VALUES(?, ?, ?, ?)",p.toString(), log.getTimes().get(i - 1), log.getMessages().get(i - 1), id);
+        }
+    }
+
     public MessageLog getMessageLog(String id) throws SQLException {
         ResultSet rs = StaffSystemManager.ssm.getMainSQL().getResult("SELECT * FROM logs WHERE logID = ?", Arrays.asList(id));
         List<Long> times = new ArrayList<>();

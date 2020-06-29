@@ -10,6 +10,8 @@ import de.ziemlich.bungeeStaffSystem.mySql.SQL;
 import de.ziemlich.bungeeStaffSystem.mySql.SQLConfig;
 import de.ziemlich.bungeeStaffSystem.punishsystem.commands.*;
 import de.ziemlich.bungeeStaffSystem.punishsystem.db.BanDAO;
+import de.ziemlich.bungeeStaffSystem.punishsystem.db.ChestDAO;
+import de.ziemlich.bungeeStaffSystem.punishsystem.db.CityBuildDatabaseConnection;
 import de.ziemlich.bungeeStaffSystem.punishsystem.db.MuteDAO;
 import de.ziemlich.bungeeStaffSystem.punishsystem.idrsystem.db.RIDDAO;
 import de.ziemlich.bungeeStaffSystem.report.ReportManager;
@@ -41,9 +43,12 @@ public class StaffSystemManager {
         LogManager.load();
         SlotManager.loadServers();
         MsgManager.loadMsgManager();
+        ChestDAO.getInstance().loadTable();
     }
 
     private SQL MainSQL;
+    public static CityBuildDatabaseConnection MainSQLCB;
+
     public SQL getMainSQL() {
         return MainSQL;
     }
@@ -65,9 +70,11 @@ public class StaffSystemManager {
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new UnmuteCommandExecutor("unmute"));
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new CheckCommandExecutor("check"));
         ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new DeleteCommandExecutor("delete"));
+        ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new TicketsCMD("tickets"));
 
-        ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new FarmserverCommandExecutor("farmserver","","fs","farmwelt","nether","mobs"));
-        ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new CBCommandExecutor("cb","","c","citybuild","cbreal","cbrealistic"));
+        ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new FarmserverCommandExecutor("cbclassic","","cbc"));
+        ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new CBCommandExecutor("cbrealistic","","c","cbr","cbreal"));
+        ProxyServer.getInstance().getPluginManager().registerCommand(StaffSystem.getInstance(), new ChestAddCMD("chestadd"));
 
 
         ProxyServer.getInstance().registerChannel("c:bungeecord");
@@ -77,5 +84,7 @@ public class StaffSystemManager {
         SQLConfig MainCfg = new SQLConfig("plugins//StaffSystem", "MainMySQL.yml");
         MainSQL = new SQL(MainCfg.readData());
         MainSQL.connect();
+        MainSQLCB = new CityBuildDatabaseConnection(MainCfg.readData());
+        MainSQLCB.connect();
     }
 }

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>groupId</groupId>
   <artifactId>BungeeStaffSystem</artifactId>
-  <version>1.1.5-SNAPSHOT</version>
+  <version>1.1.6-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
@@ -48,7 +48,7 @@
     <dependency>
       <groupId>net.md-5</groupId>
       <artifactId>bungeecord-api</artifactId>
-      <version>1.15-SNAPSHOT</version>
+      <version>1.16-R0.2-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>

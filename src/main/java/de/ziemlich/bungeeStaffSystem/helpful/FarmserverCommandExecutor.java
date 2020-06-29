@@ -23,7 +23,7 @@ public class FarmserverCommandExecutor extends Command {
 
         ProxiedPlayer p = (ProxiedPlayer) commandSender;
 
-        p.connect(ProxyServer.getInstance().getServerInfo("farmserver"));
+        p.connect(ProxyServer.getInstance().getServerInfo("cbclassic"));
 
     }
 }
