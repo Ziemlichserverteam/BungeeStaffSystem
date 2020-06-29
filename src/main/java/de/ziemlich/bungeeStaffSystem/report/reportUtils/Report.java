@@ -1,15 +1,8 @@
 package de.ziemlich.bungeeStaffSystem.report.reportUtils;
 
-import de.ziemlich.bungeeStaffSystem.StaffSystem;
-import de.ziemlich.bungeeStaffSystem.ids.ID;
-import de.ziemlich.bungeeStaffSystem.ids.IDTypes;
-import de.ziemlich.bungeeStaffSystem.utils.StaffSystemManager;
 import de.ziemlich.bungeeStaffSystem.utils.UUIDFetcher;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Arrays;
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class Report {
@@ -18,31 +11,90 @@ public class Report {
 
     private UUID reportedPlayerUUID;
     private UUID reportedByUUID;
-    private String moderatorUUID;
+    private UUID moderatorUUID;
     private String reason;
-    private boolean inProgress;
-    private boolean finished;
-    private String id;
+    private ReportState state;
+    private String reportId;
+    private int amount;
+    private boolean view;
 
-    public Report(ProxiedPlayer reportedPlayer, ProxiedPlayer reportedBy, String reason) {
-        this.reportedPlayerUUID = UUIDFetcher.getUUID(reportedPlayer.getName());
-        this.reportedByUUID = UUIDFetcher.getUUID(reportedBy.getName());
+    public Report(UUID reportedPlayerUUID, UUID reportedByUUID, @Nullable UUID moderatorUUID, String reason, ReportState state, String reportId, int amount, boolean view) {
+        this.reportedPlayerUUID = reportedPlayerUUID;
+        this.reportedByUUID = reportedByUUID;
         this.reason = reason;
-        this.moderatorUUID = "null";
-        this.inProgress = false;
-        this.finished = false;
-        this.id = new ID(IDTypes.REPORTID).createID();
+        if(moderatorUUID != null) {
+            this.moderatorUUID = moderatorUUID;
+        }else {
+            this.moderatorUUID = null;
+        }
+        this.state = state;
+        this.reportId = reportId;
+        this.amount = amount;
+        this.view = view;
+    }
+
+    public boolean isView() {
+        return view;
+    }
+
+    public void setView(boolean view) {
+        this.view = view;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public UUID getReportedPlayerUUID() {
+        return this.reportedPlayerUUID;
+    }
+
+    public UUID getReportedByUUID() {
+        return this.reportedByUUID;
+    }
+
+    public UUID getModeratorUUID() {
+        return this.moderatorUUID;
     }
 
     public String getReason() {
-        return reason;
+        return this.reason;
     }
 
-    public void create() {
-            StaffSystemManager.ssm.getMainSQL().executeUpdate("INSERT INTO reports " +
-                            "(reportedPlayerUUID, reportedByUUID, moderatorUUID, reason, inProgress, finished, id) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?)",
-                    Arrays.asList(this.reportedPlayerUUID, this.reportedByUUID, this.moderatorUUID, this.reason, this.inProgress, this.finished, this.id));
+    public ReportState getState() {
+        return state;
+    }
+
+    public String getReportId() {
+        return reportId;
+    }
+
+    public void setReportedPlayerUUID(UUID reportedPlayerUUID) {
+        this.reportedPlayerUUID = reportedPlayerUUID;
+    }
+
+    public void setReportedByUUID(UUID reportedByUUID) {
+        this.reportedByUUID = reportedByUUID;
+    }
+
+    public void setModeratorUUID(UUID moderatorUUID) {
+        this.moderatorUUID = moderatorUUID;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public void setState(ReportState state) {
+        this.state = state;
+    }
+
+    public void setReportId(String reportId) {
+        this.reportId = reportId;
     }
 
 }

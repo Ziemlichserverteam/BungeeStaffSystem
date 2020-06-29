@@ -3,7 +3,7 @@
     <output-path>D:/BungeeServer/servers/proxy/plugins</output-path>
     <root id="archive" name="StaffSystem.jar">
       <element id="module-output" name="BungeeStaffSystem" />
-      <element id="file-copy" path="$PROJECT_DIR$/src/main/java/plugin.yml" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/plugin.yml" />
     </root>
   </artifact>
 </component>

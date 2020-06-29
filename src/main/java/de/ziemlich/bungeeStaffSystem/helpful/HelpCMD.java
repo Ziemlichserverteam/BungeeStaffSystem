@@ -16,7 +16,7 @@ public class HelpCMD extends Command {
         sender.sendMessage(new TextComponent(StaffSystemManager.ssm.prefix + "§7Hilfe:"));
         sender.sendMessage(new TextComponent("§7- §c/report §7- Reporte einen Spieler"));
         sender.sendMessage(new TextComponent("§7- §a/hub §7- Gehe zu Lobby"));
-        sender.sendMessage(new TextComponent("§7- §e/vote §7- Vote für den Server"));
+        sender.sendMessage(new TextComponent("§7- §e/warps"));
         sender.sendMessage(new TextComponent("§7Shop: §bshop.ziemlich.eu"));
         sender.sendMessage(new TextComponent("§7Discord: §3dc.ziemlich.eu"));
     }
